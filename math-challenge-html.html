@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Sharpness Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #eff6ff 0%, #faf5ff 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .container {
+            max-width: 64rem;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .brain-icon {
+            color: #9333ea;
+            font-size: 2.5rem;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        .level-progress {
+            margin-bottom: 1.5rem;
+        }
+
+        .level-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .level-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            opacity: 0.5;
+        }
+
+        .level-badge.current {
+            opacity: 1;
+        }
+
+        .level-badge.bg-green { background-color: #059669; }
+        .level-badge.bg-blue { background-color: #2563eb; }
+        .level-badge.bg-purple { background-color: #7c3aed; }
+        .level-badge.bg-orange { background-color: #ea580c; }
+        .level-badge.bg-red { background-color: #dc2626; }
+        .level-badge.bg-indigo { background-color: #4f46e5; }
+        .level-badge.bg-pink { background-color: #db2777; }
+        .level-badge.bg-gray { background-color: #1f2937; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .stat-value.time-low {
+            color: #dc2626;
+        }
+
+        .stat-value.orange {
+            color: #ea580c;
+        }
+
+        .stat-value.blue {
+            color: #2563eb;
+        }
+
+        .stat-value.purple {
+            color: #7c3aed;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .welcome-screen h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-screen p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #7c3aed;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #6d28d9;
+        }
+
+        .btn-secondary {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .question {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .answer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .answer-input {
+            font-size: 1.25rem;
+            padding: 0.75rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            text-align: center;
+            width: 16rem;
+            max-width: 100%;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+
+        .feedback.correct {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .feedback.level-up {
+            background-color: #f3e8ff;
+            color: #7c2d12;
+        }
+
+        .feedback.incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .explanation {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: normal;
+        }
+
+        .instructions {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .instructions h3 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .instructions ul {
+            list-style: none;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.25rem;
+        }
+
+        .game-over {
+            text-align: center;
+        }
+
+        .game-over h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .final-score {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-highlight {
+            font-weight: bold;
+            color: #7c3aed;
+        }
+
+        .restart-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .answer-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span class="brain-icon">🧠</span>
+                Math Sharpness Challenge
+            </h1>
+            <p>Master mathematics from arithmetic to complex analysis!</p>
+        </div>
+
+        <!-- Level Progress -->
+        <div class="level-progress">
+            <div class="level-badges" id="levelBadges">
+                <!-- Level badges will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Game Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value" id="scoreValue">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value orange" id="streakValue">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏰</div>
+                <div class="stat-value" id="timeValue">600</div>
+                <div class="stat-label">Time Left</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value purple" id="levelValue">Level 1</div>
+                <div class="stat-label" id="levelName">Arithmetic</div>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div class="game-area" id="gameArea">
+            <div class="welcome-screen" id="welcomeScreen">
+                <h2>Ready to Challenge Your Math Skills?</h2>
+                <p>Solve problems across 8 levels of mathematics. Get 3 correct in a row to advance!</p>
+                <button class="btn btn-primary" onclick="startGame()">Start Challenge</button>
+            </div>
+
+            <div id="gameScreen" style="display: none;">
+                <div class="question" id="questionText"></div>
+                <div class="answer-section">
+                    <input type="text" id="answerInput" class="answer-input" placeholder="Enter your answer..." onkeypress="handleKeyPress(event)">
+                    <button class="btn btn-secondary" id="submitBtn" onclick="submitAnswer()">Submit</button>
+                </div>
+                <div id="feedback" class="feedback" style="display: none;"></div>
+            </div>
+
+            <div class="game-over" id="gameOverScreen" style="display: none;">
+                <h2>Time's Up! 🎯</h2>
+                <p class="final-score">Final Score: <span class="score-highlight" id="finalScore">0</span></p>
+                <p id="finalLevel" style="font-size: 1.125rem; margin-bottom: 1.5rem;">You reached: <strong>Arithmetic</strong></p>
+                <button class="btn btn-primary restart-btn" onclick="startGame()">
+                    🔄 Play Again
+                </button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>How to Play:</h3>
+            <ul>
+                <li>• Solve math problems across 8 difficulty levels</li>
+                <li>• Get 3 problems correct in a row to advance to the next level</li>
+                <li>• Higher levels give more points per correct answer</li>
+                <li>• You have 600 seconds (10 minutes) to score as many points as possible</li>
+                <li>• Press Enter or click Submit to answer</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let gameState = {
+            currentLevel: 0,
+            score: 0,
+            streak: 0,
+            timeLeft: 600,
+            gameActive: false,
+            currentProblem: null,
+            timer: null
+        };
+
+        // Level definitions
+        const levels = [
+            { name: "Arithmetic", color: "bg-green" },
+            { name: "Algebra", color: "bg-blue" },
+            { name: "Geometry", color: "bg-purple" },
+            { name: "Trigonometry", color: "bg-orange" },
+            { name: "Calculus", color: "bg-red" },
+            { name: "Linear Algebra", color: "bg-indigo" },
+            { name: "Differential Equations", color: "bg-pink" },
+            { name: "Complex Analysis", color: "bg-gray" }
+        ];
+
+        // Initialize the game
+        function initGame() {
+            updateLevelBadges();
+            updateStats();
+        }
+
+        function updateLevelBadges() {
+            const container = document.getElementById('levelBadges');
+            container.innerHTML = '';
+            
+            levels.forEach((level, index) => {
+                const badge = document.createElement('div');
+                badge.className = `level-badge ${level.color}`;
+                if (index === gameState.currentLevel) {
+                    badge.classList.add('current');
+                }
+                badge.textContent = level.name;
+                container.appendChild(badge);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('scoreValue').textContent = gameState.score;
+            document.getElementById('streakValue').textContent = gameState.streak;
+            
+            const timeElement = document.getElementById('timeValue');
+            timeElement.textContent = gameState.timeLeft + 's';
+            timeElement.className = gameState.timeLeft <= 10 ? 'stat-value time-low' : 'stat-value';
+            
+            document.getElementById('levelValue').textContent = `Level ${gameState.currentLevel + 1}`;
+            document.getElementById('levelName').textContent = levels[gameState.currentLevel].name;
+        }
+
+        function startGame() {
+            gameState = {
+                currentLevel: 0,
+                score: 0,
+                streak: 0,
+                timeLeft: 600,
+                gameActive: true,
+                currentProblem: null,
+                timer: null
+            };
+
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('feedback').style.display = 'none';
+
+            updateLevelBadges();
+            updateStats();
+            generateNewProblem();
+            startTimer();
+        }
+
+        function startTimer() {
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                updateStats();
+                
+                if (gameState.timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            gameState.gameActive = false;
+            clearInterval(gameState.timer);
+            
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'block';
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalLevel').innerHTML = `You reached: <strong>${levels[gameState.currentLevel].name}</strong>`;
+        }
+
+        function generateNewProblem() {
+            gameState.currentProblem = generateProblem(gameState.currentLevel);
+            document.getElementById('questionText').textContent = gameState.currentProblem.question;
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('feedback').style.display = 'none';
+        }
+
+        function submitAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            if (!userAnswer || !gameState.currentProblem) return;
+
+            const correct = userAnswer.toLowerCase() === gameState.currentProblem.answer.toLowerCase() ||
+                           Math.abs(parseFloat(userAnswer) - parseFloat(gameState.currentProblem.answer)) < 0.01;
+
+            const feedbackElement = document.getElementById('feedback');
+            document.getElementById('answerInput').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+
+            if (correct) {
+                gameState.score += (gameState.currentLevel + 1) * 10;
+                gameState.streak++;
+                
+                let feedbackText = 'Correct! 🎉';
+                feedbackElement.className = 'feedback correct';
+                
+                // Level up every 3 correct answers
+                if (gameState.streak > 0 && gameState.streak % 3 === 0 && gameState.currentLevel < levels.length - 1) {
+                    gameState.currentLevel++;
+                    feedbackText = `Level Up! Welcome to ${levels[gameState.currentLevel].name}! 🚀`;
+                    feedbackElement.className = 'feedback level-up';
+                    updateLevelBadges();
+                }
+                
+                feedbackElement.innerHTML = feedbackText;
+            } else {
+                gameState.streak = 0;
+                feedbackElement.className = 'feedback incorrect';
+                feedbackElement.innerHTML = `
+                    Incorrect. Try again! 💪
+                    <div class="explanation">
+                        <strong>Answer:</strong> ${gameState.currentProblem.answer}<br/>
+                        <strong>Explanation:</strong> ${gameState.currentProblem.explanation}
+                    </div>
+                `;
+            }
+
+            feedbackElement.style.display = 'block';
+            updateStats();
+
+            setTimeout(() => {
+                if (gameState.gameActive) {
+                    generateNewProblem();
+                }
+            }, 2000);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && gameState.gameActive && !document.getElementById('submitBtn').disabled) {
+                submitAnswer();
+            }
+        }
+
+        // COMPLETE ORIGINAL PROBLEM GENERATION - NO SIMPLIFICATION
+        function generateProblem(level) {
+            switch(level) {
+                case 0: // Arithmetic
+                    const arithmeticTypes = ['basic', 'word_problem', 'fractions', 'decimals', 'percentages', 'order_operations'];
+                    const arithType = arithmeticTypes[Math.floor(Math.random() * arithmeticTypes.length)];
+                    
+                    if (arithType === 'word_problem') {
+                        const wordProblems = [
+                            () => {
+                                const pizzas = Math.floor(Math.random() * 8) + 3;
+                                const slicesPerPizza = 8;
+                                const peopleEaten = Math.floor(Math.random() * 15) + 12;
+                                const totalSlices = pizzas * slicesPerPizza;
+                                const remaining = totalSlices - peopleEaten;
+                                return {
+                                    question: `A party ordered ${pizzas} pizzas, each cut into 8 slices. If ${peopleEaten} slices were eaten, how many slices remain?`,
+                                    answer: remaining.toString(),
+                                    explanation: `${pizzas} pizzas × 8 slices = ${totalSlices} slices. ${totalSlices} - ${peopleEaten} = ${remaining} remaining`
+                                };
+                            },
+                            () => {
+                                const monthly = Math.floor(Math.random() * 100) + 50;
+                                const months = Math.floor(Math.random() * 8) + 4;
+                                const total = monthly * months;
+                                return {
+                                    question: `Sarah saves $${monthly} each month for ${months} months. How much does she save in total?`,
+                                    answer: total.toString(),
+                                    explanation: `$${monthly} × ${months} months = $${total}`
+                                };
+                            },
+                            () => {
+                                const students = Math.floor(Math.random() * 120) + 80;
+                                const busCapacity = Math.floor(Math.random() * 20) + 35;
+                                const buses = Math.ceil(students / busCapacity);
+                                return {
+                                    question: `${students} students need buses for a field trip. Each bus holds ${busCapacity} students. How many buses are needed?`,
+                                    answer: buses.toString(),
+                                    explanation: `${students} ÷ ${busCapacity} = ${(students/busCapacity).toFixed(1)}, so ${buses} buses needed`
+                                };
+                            },
+                            () => {
+                                const bookPrice = Math.floor(Math.random() * 15) + 8;
+                                const discount = Math.floor(Math.random() * 30) + 10;
+                                const finalPrice = bookPrice - (bookPrice * discount / 100);
+                                return {
+                                    question: `A book costs $${bookPrice}. With a ${discount}% discount, what is the final price?`,
+                                    answer: finalPrice.toFixed(2),
+                                    explanation: `Discount: $${bookPrice} × ${discount}% = $${(bookPrice * discount / 100).toFixed(2)}. Final: $${bookPrice} - $${(bookPrice * discount / 100).toFixed(2)} = $${finalPrice.toFixed(2)}`
+                                };
+                            },
+                            () => {
+                                const hours = Math.floor(Math.random() * 6) + 3;
+                                const wage = Math.floor(Math.random() * 10) + 12;
+                                const overtime = Math.floor(Math.random() * 4);
+                                const regularPay = Math.min(hours, 8) * wage;
+                                const overtimePay = Math.max(0, hours - 8 + overtime) * wage * 1.5;
+                                const totalPay = regularPay + overtimePay;
+                                return {
+                                    question: `Working ${hours + overtime} hours at $${wage}/hour (1.5x overtime after 8 hours), what is the total pay?`,
+                                    answer: totalPay.toFixed(2),
+                                    explanation: `Regular: ${Math.min(hours + overtime, 8)} × $${wage} = $${Math.min(hours + overtime, 8) * wage}. Overtime: ${Math.max(0, hours + overtime - 8)} × $${wage} × 1.5 = $${Math.max(0, hours + overtime - 8) * wage * 1.5}. Total: $${totalPay.toFixed(2)}`
+                                };
+                            }
+                        ];
+                        
+                        const selectedProblem = wordProblems[Math.floor(Math.random() * wordProblems.length)];
+                        return selectedProblem();
+                    } else if (arithType === 'fractions') {
+                        const operations = ['add', 'subtract', 'multiply', 'divide'];
+                        const op = operations[Math.floor(Math.random() * operations.length)];
+                        const num1 = Math.floor(Math.random() * 9) + 1;
+                        const den1 = Math.floor(Math.random() * 9) + 2;
+                        const num2 = Math.floor(Math.random() * 9) + 1;
+                        const den2 = Math.floor(Math.random() * 9) + 2;
+                        
+                        let answerNum, answerDen, question;
+                        const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+                        
+                        if (op === 'add') {
+                            answerNum = num1 * den2 + num2 * den1;
+                            answerDen = den1 * den2;
+                            question = `${num1}/${den1} + ${num2}/${den2} = ? (simplest form)`;
+                        } else if (op === 'subtract') {
+                            answerNum = num1 * den2 - num2 * den1;
+                            answerDen = den1 * den2;
+                            question = `${num1}/${den1} - ${num2}/${den2} = ? (simplest form)`;
+                        } else if (op === 'multiply') {
+                            answerNum = num1 * num2;
+                            answerDen = den1 * den2;
+                            question = `${num1}/${den1} × ${num2}/${den2} = ? (simplest form)`;
+                        } else {
+                            answerNum = num1 * den2;
+                            answerDen = den1 * num2;
+                            question = `${num1}/${den1} ÷ ${num2}/${den2} = ? (simplest form)`;
+                        }
+                        
+                        const divisor = gcd(Math.abs(answerNum), Math.abs(answerDen));
+                        answerNum /= divisor;
+                        answerDen /= divisor;
+                        
+                        return {
+                            question: question,
+                            answer: answerDen === 1 ? answerNum.toString() : `${answerNum}/${answerDen}`,
+                            explanation: `Result: ${answerNum}/${answerDen}${answerDen === 1 ? ` = ${answerNum}` : ''}`
+                        };
+                    } else if (arithType === 'decimals') {
+                        const decimalOps = ['add', 'subtract', 'multiply', 'divide'];
+                        const op = decimalOps[Math.floor(Math.random() * decimalOps.length)];
+                        const a = (Math.floor(Math.random() * 9900) + 100) / 100;
+                        const b = (Math.floor(Math.random() * 900) + 100) / 100;
+                        
+                        let answer, question;
+                        if (op === 'add') {
+                            answer = a + b;
+                            question = `${a} + ${b} = ?`;
+                        } else if (op === 'subtract') {
+                            answer = a - b;
+                            question = `${a} - ${b} = ?`;
+                        } else if (op === 'multiply') {
+                            answer = a * b;
+                            question = `${a} × ${b} = ?`;
+                        } else {
+                            answer = a / b;
+                            question = `${a} ÷ ${b} = ? (round to 2 decimals)`;
+                        }
+                        
+                        return {
+                            question: question,
+                            answer: answer.toFixed(2),
+                            explanation: `${question.replace('?', answer.toFixed(2))}`
+                        };
+                    } else if (arithType === 'percentages') {
+                        const percentTypes = ['of', 'increase', 'decrease', 'what_percent'];
+                        const pType = percentTypes[Math.floor(Math.random() * percentTypes.length)];
+                        
+                        if (pType === 'of') {
+                            const percent = Math.floor(Math.random() * 90) + 10;
+                            const number = Math.floor(Math.random() * 900) + 100;
+                            const answer = (percent / 100) * number;
+                            return {
+                                question: `What is ${percent}% of ${number}?`,
+                                answer: answer.toString(),
+                                explanation: `${percent}% of ${number} = ${percent}/100 × ${number} = ${answer}`
+                            };
+                        } else if (pType === 'increase') {
+                            const original = Math.floor(Math.random() * 200) + 100;
+                            const percent = Math.floor(Math.random() * 50) + 10;
+                            const answer = original * (1 + percent/100);
+                            return {
+                                question: `Increase ${original} by ${percent}%. What is the result?`,
+                                answer: answer.toString(),
+                                explanation: `${original} × (1 + ${percent}/100) = ${original} × ${1 + percent/100} = ${answer}`
+                            };
+                        } else if (pType === 'decrease') {
+                            const original = Math.floor(Math.random() * 300) + 200;
+                            const percent = Math.floor(Math.random() * 40) + 10;
+                            const answer = original * (1 - percent/100);
+                            return {
+                                question: `Decrease ${original} by ${percent}%. What is the result?`,
+                                answer: answer.toString(),
+                                explanation: `${original} × (1 - ${percent}/100) = ${original} × ${1 - percent/100} = ${answer}`
+                            };
+                        } else {
+                            const part = Math.floor(Math.random() * 80) + 20;
+                            const whole = Math.floor(Math.random() * 200) + part + 50;
+                            const percent = Math.round((part / whole) * 100);
+                            return {
+                                question: `${part} is what percentage of ${whole}? (round to nearest whole)`,
+                                answer: percent.toString(),
+                                explanation: `(${part} ÷ ${whole}) × 100 = ${((part/whole) * 100).toFixed(1)}% ≈ ${percent}%`
+                            };
+                        }
+                    } else if (arithType === 'order_operations') {
+                        const expressions = [
+                            () => {
+                                const a = Math.floor(Math.random() * 10) + 2;
+                                const b = Math.floor(Math.random() * 10) + 2;
+                                const c = Math.floor(Math.random() * 10) + 2;
+                                const d = Math.floor(Math.random() * 10) + 2;
+                                const answer = a + b * c - d;
+                                return {
+                                    question: `${a} + ${b} × ${c} - ${d} = ?`,
+                                    answer: answer.toString(),
+                                    explanation: `Order: ${b} × ${c} = ${b*c}, then ${a} + ${b*c} - ${d} = ${answer}`
+                                };
+                            },
+                            () => {
+                                const a = Math.floor(Math.random() * 8) + 2;
+                                const b = Math.floor(Math.random() * 8) + 2;
+                                const c = Math.floor(Math.random() * 6) + 2;
+                                const answer = (a + b) * c;
+                                return {
+                                    question: `(${a} + ${b}) × ${c} = ?`,
+                                    answer: answer.toString(),
+                                    explanation: `Parentheses first: (${a} + ${b}) = ${a+b}, then ${a+b} × ${c} = ${answer}`
+                                };
+                            },
+                            () => {
+                                const a = Math.floor(Math.random() * 5) + 2;
+                                const b = Math.floor(Math.random() * 4) + 2;
+                                const c = Math.floor(Math.random() * 6) + 3;
+                                const d = Math.floor(Math.random() * 4) + 2;
+                                const answer = a * b + c / d;
+                                return {
+                                    question: `${a} × ${b} + ${c} ÷ ${d} = ? (round to 1 decimal)`,
+                                    answer: answer.toFixed(1),
+                                    explanation: `${a} × ${b} = ${a*b}, ${c} ÷ ${d} = ${(c/d).toFixed(1)}, then ${a*b} + ${(c/d).toFixed(1)} = ${answer.toFixed(1)}`
+                                };
+                            }
+                        ];
+                        
+                        const selectedExpression = expressions[Math.floor(Math.random() * expressions.length)];
+                        return selectedExpression();
+                    } else {
+                        const ops = ['+', '-', '×', '÷', '^'];
+                        const op = ops[Math.floor(Math.random() * ops.length)];
+                        let a = Math.floor(Math.random() * 200) + 50;
+                        let b = Math.floor(Math.random() * 50) + 10;
+                        let answer, question;
+                        
+                        if (op === '+') {
+                            answer = a + b;
+                            question = `${a} + ${b} = ?`;
+                        } else if (op === '-') {
+                            answer = a - b;
+                            question = `${a} - ${b} = ?`;
+                        } else if (op === '×') {
+                            a = Math.floor(Math.random() * 50) + 10;
+                            b = Math.floor(Math.random() * 30) + 10;
+                            answer = a * b;
+                            question = `${a} × ${b} = ?`;
+                        } else if (op === '÷') {
+                            b = Math.floor(Math.random() * 15) + 2;
+                            answer = Math.floor(Math.random() * 25) + 5;
+                            a = answer * b;
+                            question = `${a} ÷ ${b} = ?`;
+                        } else {
+                            a = Math.floor(Math.random() * 15) + 2;
+                            b = Math.floor(Math.random() * 4) + 2;
+                            answer = Math.pow(a, b);
+                            question = `${a}^${b} = ?`;
+                        }
+                        
+                        return {
+                            question: question,
+                            answer: answer.toString(),
+                            explanation: question.replace('?', answer.toString())
+                        };
+                    }
+
+                case 1: // Algebra
+                    const algebraTypes = ['linear', 'quadratic', 'word_problem', 'inequalities', 'systems', 'polynomials', 'rational'];
+                    const type = algebraTypes[Math.floor(Math.random() * algebraTypes.length)];
+                    
+                    if (type === 'word_problem') {
+                        const algebraWordProblems = [
+                            () => {
+                                const age = Math.floor(Math.random() * 20) + 15;
+                                const yearsFromNow = Math.floor(Math.random() * 10) + 5;
+                                const futureAge = age + yearsFromNow;
+                                return {
+                                    question: `Tom is currently ${age} years old. What will his age be in ${yearsFromNow} years?`,
+                                    answer: futureAge.toString(),
+                                    explanation: `Current age: ${age}. In ${yearsFromNow} years: ${age} + ${yearsFromNow} = ${futureAge}`
+                                };
+                            },
+                            () => {
+                                const totalCost = Math.floor(Math.random() * 100) + 50;
+                                const numFriends = Math.floor(Math.random() * 4) + 3;
+                                const costPerPerson = Math.floor(totalCost / numFriends);
+                                return {
+                                    question: `${numFriends} friends split a bill of ${totalCost} equally. How much does each person pay (round down)?`,
+                                    answer: costPerPerson.toString(),
+                                    explanation: `${totalCost} ÷ ${numFriends} = ${(totalCost/numFriends).toFixed(2)}, rounded down = ${costPerPerson}`
+                                };
+                            },
+                            () => {
+                                const x = Math.floor(Math.random() * 15) + 10;
+                                const total = 3 * x + 7;
+                                return {
+                                    question: `A number multiplied by 3, then increased by 7, equals ${total}. What is the number?`,
+                                    answer: x.toString(),
+                                    explanation: `3x + 7 = ${total}, so 3x = ${total - 7}, x = ${x}`
+                                };
+                            },
+                            () => {
+                                const width = Math.floor(Math.random() * 10) + 8;
+                                const perimeter = Math.floor(Math.random() * 40) + 60;
+                                const length = (perimeter - 2 * width) / 2;
+                                return {
+                                    question: `A rectangle has width ${width} cm and perimeter ${perimeter} cm. What is the length?`,
+                                    answer: length.toString(),
+                                    explanation: `P = 2(l + w), so ${perimeter} = 2(l + ${width}), l = ${length} cm`
+                                };
+                            },
+                            () => {
+                                const rate = Math.floor(Math.random() * 20) + 40;
+                                const distance = Math.floor(Math.random() * 200) + 300;
+                                const time = distance / rate;
+                                return {
+                                    question: `A car travels ${distance} miles at ${rate} mph. How long does the trip take (hours)?`,
+                                    answer: time.toFixed(1),
+                                    explanation: `Time = Distance ÷ Speed = ${distance} ÷ ${rate} = ${time.toFixed(1)} hours`
+                                };
+                            }
+                        ];
+                        
+                        const selectedProblem = algebraWordProblems[Math.floor(Math.random() * algebraWordProblems.length)];
+                        return selectedProblem();
+                    } else if (type === 'inequalities') {
+                        const x = Math.floor(Math.random() * 20) - 10;
+                        const a = Math.floor(Math.random() * 8) + 2;
+                        const b = Math.floor(Math.random() * 20) - 10;
+                        const signs = ['>', '<', '≥', '≤'];
+                        const sign = signs[Math.floor(Math.random() * signs.length)];
+                        
+                        let solution;
+                        if (sign === '>') {
+                            solution = `x > ${((a * x + b + 1) - b) / a}`;
+                        } else if (sign === '<') {
+                            solution = `x < ${((a * x + b - 1) - b) / a}`;
+                        } else if (sign === '≥') {
+                            solution = `x ≥ ${((a * x + b) - b) / a}`;
+                        } else {
+                            solution = `x ≤ ${((a * x + b) - b) / a}`;
+                        }
+                        
+                        return {
+                            question: `Solve: ${a}x + ${b} ${sign} ${a * x + b + (sign.includes('>') ? 1 : -1)}`,
+                            answer: solution,
+                            explanation: `Subtract ${b}: ${a}x ${sign} ${(sign.includes('>') ? 1 : -1)}, divide by ${a}: ${solution}`
+                        };
+                    } else if (type === 'systems') {
+                        const x = Math.floor(Math.random() * 10) + 1;
+                        const y = Math.floor(Math.random() * 10) + 1;
+                        const a1 = Math.floor(Math.random() * 5) + 1;
+                        const b1 = Math.floor(Math.random() * 5) + 1;
+                        const a2 = Math.floor(Math.random() * 5) + 1;
+                        const b2 = Math.floor(Math.random() * 5) + 1;
+                        const c1 = a1 * x + b1 * y;
+                        const c2 = a2 * x + b2 * y;
+                        
+                        return {
+                            question: `Solve system: ${a1}x + ${b1}y = ${c1}, ${a2}x + ${b2}y = ${c2}. Find x.`,
+                            answer: x.toString(),
+                            explanation: `Solution: x = ${x}, y = ${y}`
+                        };
+                    } else if (type === 'polynomials') {
+                        const polyTypes = ['expand', 'factor'];
+                        const pType = polyTypes[Math.floor(Math.random() * polyTypes.length)];
+                        
+                        if (pType === 'expand') {
+                            const a = Math.floor(Math.random() * 5) + 1;
+                            const b = Math.floor(Math.random() * 10) - 5;
+                            const c = Math.floor(Math.random() * 5) + 1;
+                            const d = Math.floor(Math.random() * 10) - 5;
+                            const expanded = `${a*c}x^2 + ${a*d + b*c}x + ${b*d}`;
+                            return {
+                                question: `Expand: (${a}x + ${b})(${c}x + ${d})`,
+                                answer: expanded,
+                                explanation: `FOIL: ${a*c}x^2 + ${a*d}x + ${b*c}x + ${b*d} = ${expanded}`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            const r1 = Math.floor(Math.random() * 6) + 1;
+                            const r2 = Math.floor(Math.random() * 6) + 1;
+                            const b = -a * (r1 + r2);
+                            const c = a * r1 * r2;
+                            return {
+                                question: `Factor: ${a}x^2 + ${b}x + ${c}`,
+                                answer: `${a}(x - ${r1})(x - ${r2})`,
+                                explanation: `Factors: ${a}(x - ${r1})(x - ${r2})`
+                            };
+                        }
+                    } else if (type === 'rational') {
+                        const num = Math.floor(Math.random() * 10) + 5;
+                        const den1 = Math.floor(Math.random() * 8) + 2;
+                        const den2 = Math.floor(Math.random() * 8) + 3;
+                        const lcm = den1 * den2; // simplified for distinct denominators
+                        
+                        return {
+                            question: `Simplify: ${num}/${den1} + ${num}/${den2}`,
+                            answer: `${num * den2 + num * den1}/${lcm}`,
+                            explanation: `Common denominator ${lcm}: ${num * den2}/${lcm} + ${num * den1}/${lcm} = ${num * den2 + num * den1}/${lcm}`
+                        };
+                    } else if (type === 'linear') {
+                        const m = Math.floor(Math.random() * 20) - 10;
+                        const c = Math.floor(Math.random() * 40) - 20;
+                        const x = Math.floor(Math.random() * 20) - 10;
+                        const y = m * x + c;
+                        const cStr = c >= 0 ? ` + ${c}` : ` - ${Math.abs(c)}`;
+                        return {
+                            question: `If ${m}x${cStr} = ${y}, find x`,
+                            answer: x.toString(),
+                            explanation: `${m}x = ${y - c}, so x = ${x}`
+                        };
+                    } else {
+                        const a = Math.floor(Math.random() * 3) + 1;
+                        const roots = [Math.floor(Math.random() * 8) - 4, Math.floor(Math.random() * 8) - 4];
+                        const b = -a * (roots[0] + roots[1]);
+                        const c = a * roots[0] * roots[1];
+                        const bStr = b >= 0 ? ` + ${b}` : ` - ${Math.abs(b)}`;
+                        const cStr = c >= 0 ? ` + ${c}` : ` - ${Math.abs(c)}`;
+                        return {
+                            question: `Find the smaller root of ${a}x^2${bStr}x${cStr} = 0`,
+                            answer: Math.min(...roots).toString(),
+                            explanation: `Roots are ${roots[0]} and ${roots[1]}, smaller is ${Math.min(...roots)}`
+                        };
+                    }
+
+                case 2: // Geometry
+                    const geoTypes = ['area', 'volume', 'distance', 'word_problem', 'angles', 'coordinate', 'perimeter', 'circles'];
+                    const geoType = geoTypes[Math.floor(Math.random() * geoTypes.length)];
+                    
+                    if (geoType === 'word_problem') {
+                        const geometryWordProblems = [
+                            () => {
+                                const length = Math.floor(Math.random() * 15) + 20;
+                                const width = Math.floor(Math.random() * 10) + 12;
+                                const costPerSqFt = Math.floor(Math.random() * 3) + 2;
+                                const area = length * width;
+                                const totalCost = area * costPerSqFt;
+                                return {
+                                    question: `A rectangular garden is ${length} ft by ${width} ft. Grass seed costs ${costPerSqFt} per sq ft. What is the total cost?`,
+                                    answer: totalCost.toString(),
+                                    explanation: `Area = ${length} × ${width} = ${area} sq ft. Cost = ${area} × ${costPerSqFt} = ${totalCost}`
+                                };
+                            },
+                            () => {
+                                const radius = Math.floor(Math.random() * 8) + 5;
+                                const circumference = (2 * 3.14 * radius).toFixed(1);
+                                return {
+                                    question: `A circular track has radius ${radius} meters. What is the circumference? (use pi = 3.14, round to 1 decimal)`,
+                                    answer: circumference,
+                                    explanation: `C = 2 × 3.14 × ${radius} = ${circumference} meters`
+                                };
+                            },
+                            () => {
+                                const height = Math.floor(Math.random() * 20) + 30;
+                                const shadowLength = Math.floor(Math.random() * 15) + 10;
+                                const angle = Math.atan(height / shadowLength) * (180 / Math.PI);
+                                return {
+                                    question: `A ${height}-foot tree casts a ${shadowLength}-foot shadow. What is the angle of elevation to the sun (degrees, round to nearest whole)?`,
+                                    answer: Math.round(angle).toString(),
+                                    explanation: `tan(angle) = opposite/adjacent = ${height}/${shadowLength}, angle = ${Math.round(angle)} degrees`
+                                };
+                            }
+                        ];
+                        
+                        const selectedProblem = geometryWordProblems[Math.floor(Math.random() * geometryWordProblems.length)];
+                        return selectedProblem();
+                    } else if (geoType === 'area') {
+                        const base = Math.floor(Math.random() * 15) + 5;
+                        const height = Math.floor(Math.random() * 12) + 4;
+                        const area = 0.5 * base * height;
+                        return {
+                            question: `Area of triangle with base ${base} and height ${height}?`,
+                            answer: area.toString(),
+                            explanation: `A = (1/2) × base × height = (1/2) × ${base} × ${height} = ${area}`
+                        };
+                    } else if (geoType === 'volume') {
+                        const s = Math.floor(Math.random() * 8) + 3;
+                        const volume = s * s * s;
+                        return {
+                            question: `Volume of cube with side length ${s}?`,
+                            answer: volume.toString(),
+                            explanation: `V = s^3 = ${s}^3 = ${volume}`
+                        };
+                    } else {
+                        const x1 = Math.floor(Math.random() * 10) - 5;
+                        const y1 = Math.floor(Math.random() * 10) - 5;
+                        const x2 = Math.floor(Math.random() * 10) - 5;
+                        const y2 = Math.floor(Math.random() * 10) - 5;
+                        const distance = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+                        return {
+                            question: `Distance between (${x1},${y1}) and (${x2},${y2})?`,
+                            answer: distance.toFixed(2),
+                            explanation: `d = sqrt[(${x2}-${x1})^2 + (${y2}-${y1})^2] = ${distance.toFixed(2)}`
+                        };
+                    }
+
+                case 3: // Trigonometry
+                    const trigTypes = ['standard', 'word_problem', 'identities', 'equations', 'graphs', 'unit_circle'];
+                    const trigType = trigTypes[Math.floor(Math.random() * trigTypes.length)];
+                    
+                    if (trigType === 'word_problem') {
+                        const trigWordProblems = [
+                            () => {
+                                const height = Math.floor(Math.random() * 40) + 60;
+                                const angle = Math.floor(Math.random() * 30) + 30;
+                                const distance = Math.round(height / Math.tan(angle * Math.PI / 180));
+                                return {
+                                    question: `From ground level, you see the top of a ${height}-foot building at a ${angle} degree angle. How far are you from the building (round to nearest foot)?`,
+                                    answer: distance.toString(),
+                                    explanation: `tan(${angle}) = ${height}/distance, so distance = ${height}/tan(${angle}) = ${distance} feet`
+                                };
+                            },
+                            () => {
+                                const ladderLength = Math.floor(Math.random() * 10) + 15;
+                                const angle = Math.floor(Math.random() * 20) + 60;
+                                const height = Math.round(ladderLength * Math.sin(angle * Math.PI / 180));
+                                return {
+                                    question: `A ${ladderLength}-foot ladder leans against a wall at a ${angle} degree angle. How high up the wall does it reach (round to nearest foot)?`,
+                                    answer: height.toString(),
+                                    explanation: `sin(${angle}) = height/${ladderLength}, so height = ${ladderLength} × sin(${angle}) = ${height} feet`
+                                };
+                            },
+                            () => {
+                                const mountain = Math.floor(Math.random() * 2000) + 3000;
+                                const distance = Math.floor(Math.random() * 5000) + 8000;
+                                const angle = Math.atan(mountain / distance) * (180 / Math.PI);
+                                return {
+                                    question: `A ${mountain}-foot mountain appears at ${angle.toFixed(1)}° elevation from ${distance} feet away. Verify this is correct (answer: yes or no)?`,
+                                    answer: 'yes',
+                                    explanation: `tan(${angle.toFixed(1)}°) = ${mountain}/${distance} ≈ ${(mountain/distance).toFixed(3)} ✓`
+                                };
+                            },
+                            () => {
+                                const amplitude = Math.floor(Math.random() * 5) + 3;
+                                const period = Math.floor(Math.random() * 8) + 4;
+                                const frequency = 2 * Math.PI / period;
+                                return {
+                                    question: `A wave has amplitude ${amplitude} and period ${period}. What is 2π/period?`,
+                                    answer: frequency.toFixed(3),
+                                    explanation: `Angular frequency = 2π/T = 2π/${period} = ${frequency.toFixed(3)}`
+                                };
+                            }
+                        ];
+                        
+                        const selectedProblem = trigWordProblems[Math.floor(Math.random() * trigWordProblems.length)];
+                        return selectedProblem();
+                    } else if (trigType === 'identities') {
+                        const identityTypes = ['pythagorean', 'double_angle', 'sum'];
+                        const iType = identityTypes[Math.floor(Math.random() * identityTypes.length)];
+                        
+                        if (iType === 'pythagorean') {
+                            const angle = [30, 45, 60][Math.floor(Math.random() * 3)];
+                            const sinVal = { 30: 0.5, 45: 0.707, 60: 0.866 }[angle];
+                            const cosSquared = (1 - sinVal * sinVal).toFixed(3);
+                            return {
+                                question: `If sin(${angle}°) = ${sinVal}, what is cos²(${angle}°)?`,
+                                answer: cosSquared,
+                                explanation: `sin²θ + cos²θ = 1, so cos²(${angle}°) = 1 - sin²(${angle}°) = 1 - ${sinVal}² = ${cosSquared}`
+                            };
+                        } else if (iType === 'double_angle') {
+                            const angle = Math.floor(Math.random() * 45) + 15;
+                            const doubleAngle = 2 * angle;
+                            return {
+                                question: `Using double angle formula, sin(${doubleAngle}°) = 2sin(?)cos(?)`,
+                                answer: `${angle}`,
+                                explanation: `sin(2θ) = 2sin(θ)cos(θ), so sin(${doubleAngle}°) = 2sin(${angle}°)cos(${angle}°)`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 30) + 15;
+                            const b = Math.floor(Math.random() * 30) + 15;
+                            return {
+                                question: `sin(${a}° + ${b}°) uses which identity? (answer: sum, difference, double, or half)`,
+                                answer: 'sum',
+                                explanation: `sin(A + B) = sin(A)cos(B) + cos(A)sin(B) - this is the sum identity`
+                            };
+                        }
+                    } else if (trigType === 'equations') {
+                        const eqTypes = ['basic', 'quadratic'];
+                        const eType = eqTypes[Math.floor(Math.random() * eqTypes.length)];
+                        
+                        if (eType === 'basic') {
+                            const values = [0.5, 0.707, 0.866, 1];
+                            const val = values[Math.floor(Math.random() * values.length)];
+                            const angles = { 0.5: [30, 150], 0.707: [45, 135], 0.866: [60, 120], 1: [90] };
+                            const solutions = angles[val];
+                            return {
+                                question: `Solve sin(θ) = ${val} for 0° ≤ θ ≤ 180°. Give first solution.`,
+                                answer: solutions[0].toString(),
+                                explanation: `sin(θ) = ${val} when θ = ${solutions.join('° or ')}°`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            const solutions = a === 1 ? [30, 150] : a === 2 ? [45, 135] : [60, 120];
+                            return {
+                                question: `2sin²(θ) - sin(θ) - 1 = 0. Find smallest positive solution (degrees).`,
+                                answer: '30',
+                                explanation: `Factor: (2sin(θ) + 1)(sin(θ) - 1) = 0. Solutions: sin(θ) = -1/2 or sin(θ) = 1. Smallest: 30°`
+                            };
+                        }
+                    } else if (trigType === 'graphs') {
+                        const graphTypes = ['amplitude', 'period', 'phase'];
+                        const gType = graphTypes[Math.floor(Math.random() * graphTypes.length)];
+                        
+                        if (gType === 'amplitude') {
+                            const amp = Math.floor(Math.random() * 8) + 2;
+                            return {
+                                question: `What is the amplitude of y = ${amp}sin(x)?`,
+                                answer: amp.toString(),
+                                explanation: `Amplitude is the coefficient of sin(x), which is ${amp}`
+                            };
+                        } else if (gType === 'period') {
+                            const coeff = Math.floor(Math.random() * 6) + 2;
+                            const period = 2 * Math.PI / coeff;
+                            return {
+                                question: `What is the period of y = sin(${coeff}x)? Express as fraction of π.`,
+                                answer: coeff === 2 ? 'π' : `${2}π/${coeff}`,
+                                explanation: `Period = 2π/B = 2π/${coeff} = ${coeff === 2 ? 'π' : `2π/${coeff}`}`
+                            };
+                        } else {
+                            const shift = Math.floor(Math.random() * 6) + 1;
+                            const direction = Math.random() > 0.5 ? 'right' : 'left';
+                            const sign = direction === 'right' ? '-' : '+';
+                            return {
+                                question: `y = sin(x ${sign} ${shift}) is shifted which direction?`,
+                                answer: direction,
+                                explanation: `y = sin(x ${sign} ${shift}) shifts ${direction} by ${shift} units`
+                            };
+                        }
+                    } else if (trigType === 'unit_circle') {
+                        const angles = [0, 30, 45, 60, 90, 120, 135, 150, 180];
+                        const angle = angles[Math.floor(Math.random() * angles.length)];
+                        const coords = {
+                            0: [1, 0], 30: [0.866, 0.5], 45: [0.707, 0.707], 60: [0.5, 0.866], 90: [0, 1],
+                            120: [-0.5, 0.866], 135: [-0.707, 0.707], 150: [-0.866, 0.5], 180: [-1, 0]
+                        };
+                        
+                        return {
+                            question: `On unit circle, what is cos(${angle}°)?`,
+                            answer: coords[angle][0].toString(),
+                            explanation: `At ${angle}°, coordinates are (${coords[angle][0]}, ${coords[angle][1]}), so cos(${angle}°) = ${coords[angle][0]}`
+                        };
+                    } else {
+                        const angles = [0, 30, 45, 60, 90];
+                        const angle = angles[Math.floor(Math.random() * angles.length)];
+                        const funcs = ['sin', 'cos'];
+                        const func = funcs[Math.floor(Math.random() * funcs.length)];
+                        
+                        const values = {
+                            sin: { 0: 0, 30: 0.5, 45: 0.707, 60: 0.866, 90: 1 },
+                            cos: { 0: 1, 30: 0.866, 45: 0.707, 60: 0.5, 90: 0 }
+                        };
+                        
+                        return {
+                            question: `${func}(${angle} degrees) = ? (3 decimal places)`,
+                            answer: values[func][angle].toString(),
+                            explanation: `${func}(${angle} degrees) = ${values[func][angle]}`
+                        };
+                    }
+
+                case 4: // Calculus
+                    const calcTypes = ['derivative', 'integral', 'word_problem', 'limits', 'chain_rule', 'optimization', 'related_rates'];
+                    const calcType = calcTypes[Math.floor(Math.random() * calcTypes.length)];
+                    
+                    if (calcType === 'word_problem') {
+                        const calculusWordProblems = [
+                            () => {
+                                const velocity = Math.floor(Math.random() * 20) + 30;
+                                const time = Math.floor(Math.random() * 4) + 3;
+                                const distance = velocity * time;
+                                return {
+                                    question: `A car travels at constant ${velocity} mph for ${time} hours. What is the total distance traveled?`,
+                                    answer: distance.toString(),
+                                    explanation: `Distance = velocity × time = ${velocity} × ${time} = ${distance} miles`
+                                };
+                            },
+                            () => {
+                                const side = Math.floor(Math.random() * 5) + 3;
+                                const rate = 2;
+                                const areaRate = 2 * side * rate;
+                                return {
+                                    question: `A square side length is ${side} units and growing at 2 units/sec. How fast is the area changing? (A = s^2, dA/dt = 2s × ds/dt)`,
+                                    answer: areaRate.toString(),
+                                    explanation: `dA/dt = 2s × ds/dt = 2 × ${side} × 2 = ${areaRate} square units/sec`
+                                };
+                            },
+                            () => {
+                                const height = Math.floor(Math.random() * 50) + 100;
+                                const time = Math.sqrt(2 * height / 32);
+                                return {
+                                    question: `An object falls from ${height} feet. Using h = ${height} - 16t², when does it hit ground? (round to 1 decimal)`,
+                                    answer: time.toFixed(1),
+                                    explanation: `0 = ${height} - 16t², so t² = ${height}/16, t = √(${height/16}) = ${time.toFixed(1)} seconds`
+                                };
+                            },
+                            () => {
+                                const principal = Math.floor(Math.random() * 5000) + 5000;
+                                const rate = Math.floor(Math.random() * 5) + 3;
+                                const time = Math.floor(Math.random() * 5) + 2;
+                                const amount = principal * Math.exp(rate * time / 100);
+                                return {
+                                    question: `${principal} invested at ${rate}% continuous compound interest for ${time} years. Final amount? (A = Pe^(rt), round to nearest dollar)`,
+                                    answer: Math.round(amount).toString(),
+                                    explanation: `A = ${principal}e^(0.0${rate} × ${time}) = ${principal}e^(${rate*time/100}) ≈ ${Math.round(amount)}`
+                                };
+                            }
+                        ];
+                        
+                        const selectedProblem = calculusWordProblems[Math.floor(Math.random() * calculusWordProblems.length)];
+                        return selectedProblem();
+                    } else if (calcType === 'limits') {
+                        const limitTypes = ['basic', 'indeterminate', 'infinity'];
+                        const lType = limitTypes[Math.floor(Math.random() * limitTypes.length)];
+                        
+                        if (lType === 'basic') {
+                            const a = Math.floor(Math.random() * 8) + 2;
+                            const b = Math.floor(Math.random() * 6) + 1;
+                            return {
+                                question: `lim(x→${a}) (${b}x + 3) = ?`,
+                                answer: (b * a + 3).toString(),
+                                explanation: `Direct substitution: ${b}(${a}) + 3 = ${b * a + 3}`
+                            };
+                        } else if (lType === 'indeterminate') {
+                            const a = Math.floor(Math.random() * 5) + 2;
+                            return {
+                                question: `lim(x→${a}) [(x² - ${a}²)/(x - ${a})] = ?`,
+                                answer: (2 * a).toString(),
+                                explanation: `Factor: (x + ${a})(x - ${a})/(x - ${a}) = x + ${a}. Limit = ${a} + ${a} = ${2 * a}`
+                            };
+                        } else {
+                            const coeff = Math.floor(Math.random() * 5) + 2;
+                            return {
+                                question: `lim(x→∞) ${coeff}x/(x + 1) = ?`,
+                                answer: coeff.toString(),
+                                explanation: `Divide by highest power: ${coeff}/(1 + 1/x) → ${coeff} as x → ∞`
+                            };
+                        }
+                    } else if (calcType === 'chain_rule') {
+                        const chainTypes = ['polynomial', 'trig', 'exponential'];
+                        const cType = chainTypes[Math.floor(Math.random() * chainTypes.length)];
+                        
+                        if (cType === 'polynomial') {
+                            const a = Math.floor(Math.random() * 5) + 2;
+                            const n = Math.floor(Math.random() * 4) + 2;
+                            return {
+                                question: `d/dx[(${a}x + 1)^${n}] = ?`,
+                                answer: `${n * a}(${a}x + 1)^${n-1}`,
+                                explanation: `Chain rule: ${n}(${a}x + 1)^${n-1} × ${a} = ${n * a}(${a}x + 1)^${n-1}`
+                            };
+                        } else if (cType === 'trig') {
+                            const a = Math.floor(Math.random() * 4) + 2;
+                            return {
+                                question: `d/dx[sin(${a}x)] = ?`,
+                                answer: `${a}cos(${a}x)`,
+                                explanation: `Chain rule: cos(${a}x) × ${a} = ${a}cos(${a}x)`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 2;
+                            return {
+                                question: `d/dx[e^(${a}x)] = ?`,
+                                answer: `${a}e^(${a}x)`,
+                                explanation: `Chain rule: e^(${a}x) × ${a} = ${a}e^(${a}x)`
+                            };
+                        }
+                    } else if (calcType === 'optimization') {
+                        const optTypes = ['max_min', 'critical_points'];
+                        const oType = optTypes[Math.floor(Math.random() * optTypes.length)];
+                        
+                        if (oType === 'max_min') {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            const b = Math.floor(Math.random() * 8) + 4;
+                            const criticalPoint = b / (2 * a);
+                            return {
+                                question: `Find critical point of f(x) = -${a}x² + ${b}x`,
+                                answer: criticalPoint.toString(),
+                                explanation: `f'(x) = -${2*a}x + ${b} = 0, so x = ${b}/${2*a} = ${criticalPoint}`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 4) + 2;
+                            const b = Math.floor(Math.random() * 6) + 3;
+                            return {
+                                question: `Where is f(x) = x³ - ${a}x² + ${b}x increasing? (f'(x) > 0)`,
+                                answer: 'need f\'(x)',
+                                explanation: `f'(x) = 3x² - ${2*a}x + ${b}. Set > 0 to find intervals.`
+                            };
+                        }
+                    } else if (calcType === 'related_rates') {
+                        const rrTypes = ['balloon', 'ladder', 'cone'];
+                        const rType = rrTypes[Math.floor(Math.random() * rrTypes.length)];
+                        
+                        if (rType === 'balloon') {
+                            const rate = Math.floor(Math.random() * 8) + 4;
+                            const radius = Math.floor(Math.random() * 5) + 3;
+                            const surfaceRate = 8 * Math.PI * radius * rate;
+                            return {
+                                question: `Balloon radius increases at ${rate} cm/s. When r = ${radius} cm, how fast is surface area changing? (SA = 4πr²)`,
+                                answer: `${surfaceRate}π`,
+                                explanation: `dSA/dt = 8πr × dr/dt = 8π(${radius})(${rate}) = ${surfaceRate}π cm²/s`
+                            };
+                        } else if (rType === 'ladder') {
+                            const length = Math.floor(Math.random() * 5) + 10;
+                            const rate = Math.floor(Math.random() * 3) + 1;
+                            const bottom = Math.floor(Math.random() * 4) + 3;
+                            const top = Math.sqrt(length * length - bottom * bottom);
+                            const topRate = -(bottom * rate) / top;
+                            return {
+                                question: `${length}ft ladder slides down wall. Bottom moves out at ${rate} ft/s. When bottom is ${bottom}ft from wall, how fast is top moving?`,
+                                answer: topRate.toFixed(2),
+                                explanation: `x² + y² = ${length}². Differentiate: 2x(dx/dt) + 2y(dy/dt) = 0. dy/dt = ${topRate.toFixed(2)} ft/s`
+                            };
+                        } else {
+                            const height = Math.floor(Math.random() * 8) + 6;
+                            const radius = Math.floor(Math.random() * 4) + 2;
+                            const rate = Math.floor(Math.random() * 5) + 3;
+                            const volumeRate = Math.PI * radius * radius * rate / 3;
+                            return {
+                                question: `Inverted cone: height ${height}cm, radius ${radius}cm. Water enters at ${rate} cm³/s. How fast is height changing?`,
+                                answer: (rate / (Math.PI * radius * radius / 3)).toFixed(2),
+                                explanation: `V = (1/3)πr²h. For similar triangles: r/h constant. dV/dt = (1/3)πr² × dh/dt`
+                            };
+                        }
+                    } else if (calcType === 'derivative') {
+                        const n = Math.floor(Math.random() * 6) + 3;
+                        const coeff = Math.floor(Math.random() * 5) + 2;
+                        return {
+                            question: `d/dx(${coeff}x^${n}) = ?`,
+                            answer: `${coeff * n}x^${n-1}`,
+                            explanation: `d/dx(${coeff}x^${n}) = ${coeff * n}x^${n-1}`
+                        };
+                    } else {
+                        const n = Math.floor(Math.random() * 5) + 1;
+                        const coeff = Math.floor(Math.random() * 4) + 1;
+                        return {
+                            question: `Integral of ${coeff}x^${n} dx = ?`,
+                            answer: `${coeff}x^${n+1}/${n+1} + C`,
+                            explanation: `Integral of ${coeff}x^${n} dx = ${coeff}x^${n+1}/${n+1} + C`
+                        };
+                    }
+
+                case 5: // Linear Algebra
+                    const linearTypes = ['determinant', 'vector_ops', 'word_problem', 'matrices', 'eigenvalues', 'transformations', 'systems', 'cross_product', 'matrix_ops', 'rank', 'nullspace'];
+                    const linearType = linearTypes[Math.floor(Math.random() * linearTypes.length)];
+                    
+                    if (linearType === 'word_problem') {
+                        const linearWordProblems = [
+                            () => {
+                                const force1 = Math.floor(Math.random() * 5) + 3;
+                                const force2 = Math.floor(Math.random() * 5) + 4;
+                                const resultant = Math.sqrt(force1*force1 + force2*force2);
+                                return {
+                                    question: `Two perpendicular forces of ${force1}N and ${force2}N act on an object. What is the magnitude of the resultant force (round to 1 decimal)?`,
+                                    answer: resultant.toFixed(1),
+                                    explanation: `Resultant = sqrt(${force1}^2 + ${force2}^2) = sqrt(${force1*force1} + ${force2*force2}) = ${resultant.toFixed(1)}N`
+                                };
+                            },
+                            () => {
+                                const v1 = [Math.floor(Math.random() * 6) + 2, Math.floor(Math.random() * 6) + 2];
+                                const v2 = [Math.floor(Math.random() * 6) + 2, Math.floor(Math.random() * 6) + 2];
+                                const dotProduct = v1[0] * v2[0] + v1[1] * v2[1];
+                                return {
+                                    question: `A robot moves (${v1[0]}, ${v1[1]}) meters, then (${v2[0]}, ${v2[1]}) meters. What is the dot product of these vectors?`,
+                                    answer: dotProduct.toString(),
+                                    explanation: `Dot product = ${v1[0]} × ${v2[0]} + ${v1[1]} × ${v2[1]} = ${v1[0]*v2[0]} + ${v1[1]*v2[1]} = ${dotProduct}`
+                                };
+                            },
+                            () => {
+                                const speed1 = Math.floor(Math.random() * 20) + 30;
+                                const speed2 = Math.floor(Math.random() * 20) + 40;
+                                const angle = Math.floor(Math.random() * 30) + 30;
+                                const angleRad = angle * Math.PI / 180;
+                                const relativeSpeed = Math.sqrt(speed1*speed1 + speed2*speed2 - 2*speed1*speed2*Math.cos(angleRad));
+                                return {
+                                    question: `Two planes fly at ${speed1} and ${speed2} mph at ${angle}° angle. What is their relative speed (round to 1 decimal)?`,
+                                    answer: relativeSpeed.toFixed(1),
+                                    explanation: `Relative speed = sqrt(${speed1}^2 + ${speed2}^2 - 2×${speed1}×${speed2}×cos(${angle}°)) = ${relativeSpeed.toFixed(1)} mph`
+                                };
+                            },
+                            () => {
+                                const x1 = Math.floor(Math.random() * 5) + 1;
+                                const y1 = Math.floor(Math.random() * 5) + 1;
+                                const x2 = Math.floor(Math.random() * 5) + 1;
+                                const y2 = Math.floor(Math.random() * 5) + 1;
+                                const distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+                                return {
+                                    question: `A drone flies from (${x1}, ${y1}) to (${x2}, ${y2}). What is the distance traveled?`,
+                                    answer: distance.toFixed(2),
+                                    explanation: `Distance = sqrt((${x2}-${x1})^2 + (${y2}-${y1})^2) = ${distance.toFixed(2)} units`
+                                };
+                            }
+                        ];
+                        
+                        const selectedProblem = linearWordProblems[Math.floor(Math.random() * linearWordProblems.length)];
+                        return selectedProblem();
+                    } else if (linearType === 'determinant') {
+                        const detTypes = ['2x2', '3x3'];
+                        const detType = detTypes[Math.floor(Math.random() * detTypes.length)];
+                        
+                        if (detType === '2x2') {
+                            const a = Math.floor(Math.random() * 8) - 4;
+                            const b = Math.floor(Math.random() * 8) - 4;
+                            const c = Math.floor(Math.random() * 8) - 4;
+                            const d = Math.floor(Math.random() * 8) - 4;
+                            const det = a * d - b * c;
+                            return {
+                                question: `det([${a} ${b}; ${c} ${d}]) = ?`,
+                                answer: det.toString(),
+                                explanation: `det = ${a} × ${d} - ${b} × ${c} = ${a*d} - ${b*c} = ${det}`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 5) + 1;
+                            const b = Math.floor(Math.random() * 5) + 1;
+                            const c = Math.floor(Math.random() * 5) + 1;
+                            const det = a * b * c;
+                            return {
+                                question: `det([${a} 0 0; 0 ${b} 0; 0 0 ${c}]) = ?`,
+                                answer: det.toString(),
+                                explanation: `Diagonal matrix: det = ${a} × ${b} × ${c} = ${det}`
+                            };
+                        }
+                    } else if (linearType === 'vector_ops') {
+                        const vecTypes = ['dot_product', 'magnitude', 'unit_vector', 'cross_product'];
+                        const vecType = vecTypes[Math.floor(Math.random() * vecTypes.length)];
+                        
+                        if (vecType === 'dot_product') {
+                            const v1 = [Math.floor(Math.random() * 10) - 5, Math.floor(Math.random() * 10) - 5];
+                            const v2 = [Math.floor(Math.random() * 10) - 5, Math.floor(Math.random() * 10) - 5];
+                            const dotProduct = v1[0] * v2[0] + v1[1] * v2[1];
+                            return {
+                                question: `(${v1[0]}, ${v1[1]}) dot (${v2[0]}, ${v2[1]}) = ?`,
+                                answer: dotProduct.toString(),
+                                explanation: `${v1[0]} × ${v2[0]} + ${v1[1]} × ${v2[1]} = ${v1[0]*v2[0]} + ${v1[1]*v2[1]} = ${dotProduct}`
+                            };
+                        } else if (vecType === 'magnitude') {
+                            const x = Math.floor(Math.random() * 8) + 2;
+                            const y = Math.floor(Math.random() * 8) + 2;
+                            const magnitude = Math.sqrt(x*x + y*y);
+                            return {
+                                question: `Magnitude of vector (${x}, ${y}) = ?`,
+                                answer: magnitude.toFixed(2),
+                                explanation: `|v| = sqrt(${x}^2 + ${y}^2) = sqrt(${x*x} + ${y*y}) = ${magnitude.toFixed(2)}`
+                            };
+                        } else if (vecType === 'unit_vector') {
+                            const x = Math.floor(Math.random() * 6) + 2;
+                            const y = Math.floor(Math.random() * 6) + 2;
+                            const magnitude = Math.sqrt(x*x + y*y);
+                            const unitX = (x / magnitude).toFixed(3);
+                            const unitY = (y / magnitude).toFixed(3);
+                            return {
+                                question: `Unit vector in direction of (${x}, ${y})? Give x-component to 3 decimals.`,
+                                answer: unitX,
+                                explanation: `Unit vector = (${x}, ${y})/|(${x}, ${y})| = (${x}, ${y})/${magnitude.toFixed(3)} = (${unitX}, ${unitY})`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 5) + 1;
+                            const b = Math.floor(Math.random() * 5) + 1;
+                            const crossProduct = a * b;
+                            return {
+                                question: `(0, 0, ${a}) × (0, ${b}, 0) = ?`,
+                                answer: `(${-crossProduct}, 0, 0)`,
+                                explanation: `Cross product = (0×0 - ${a}×${b}, ${a}×0 - 0×0, 0×${b} - 0×0) = (${-crossProduct}, 0, 0)`
+                            };
+                        }
+                    } else if (linearType === 'matrices') {
+                        const matTypes = ['addition', 'multiplication', 'transpose', 'inverse'];
+                        const matType = matTypes[Math.floor(Math.random() * matTypes.length)];
+                        
+                        if (matType === 'addition') {
+                            const a1 = Math.floor(Math.random() * 5) + 1;
+                            const b1 = Math.floor(Math.random() * 5) + 1;
+                            const a2 = Math.floor(Math.random() * 5) + 1;
+                            const b2 = Math.floor(Math.random() * 5) + 1;
+                            const sum = a1 + a2;
+                            return {
+                                question: `[${a1} ${b1}] + [${a2} ${b2}] = ? (give first element)`,
+                                answer: sum.toString(),
+                                explanation: `[${a1} ${b1}] + [${a2} ${b2}] = [${a1+a2} ${b1+b2}], first element = ${sum}`
+                            };
+                        } else if (matType === 'multiplication') {
+                            const a = Math.floor(Math.random() * 4) + 1;
+                            const b = Math.floor(Math.random() * 4) + 1;
+                            const c = Math.floor(Math.random() * 4) + 1;
+                            const d = Math.floor(Math.random() * 4) + 1;
+                            const result = a * c + b * d;
+                            return {
+                                question: `[${a} ${b}] × [${c}; ${d}] = ?`,
+                                answer: result.toString(),
+                                explanation: `[${a} ${b}] × [${c}; ${d}] = ${a}×${c} + ${b}×${d} = ${result}`
+                            };
+                        } else if (matType === 'transpose') {
+                            const a = Math.floor(Math.random() * 5) + 1;
+                            const b = Math.floor(Math.random() * 5) + 1;
+                            return {
+                                question: `Transpose of [${a}; ${b}] is?`,
+                                answer: `[${a} ${b}]`,
+                                explanation: `Transpose of column vector [${a}; ${b}] is row vector [${a} ${b}]`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 2;
+                            const det = a * a;
+                            return {
+                                question: `Inverse of [${a} 0; 0 ${a}] exists if det ≠ 0. What is det?`,
+                                answer: det.toString(),
+                                explanation: `det = ${a} × ${a} - 0 × 0 = ${det} ≠ 0, so inverse exists`
+                            };
+                        }
+                    } else if (linearType === 'eigenvalues') {
+                        const eigenTypes = ['characteristic', 'trace', 'diagonal'];
+                        const eigenType = eigenTypes[Math.floor(Math.random() * eigenType.length)];
+                        
+                        if (eigenType === 'characteristic') {
+                            const a = Math.floor(Math.random() * 5) + 2;
+                            const b = Math.floor(Math.random() * 5) + 2;
+                            const trace = a + b;
+                            return {
+                                question: `Trace of [${a} 0; 0 ${b}] = ?`,
+                                answer: trace.toString(),
+                                explanation: `Trace = sum of diagonal elements = ${a} + ${b} = ${trace}`
+                            };
+                        } else if (eigenType === 'trace') {
+                            const a = Math.floor(Math.random() * 4) + 2;
+                            const det = a * a;
+                            return {
+                                question: `For matrix [${a} 0; 0 ${a}], eigenvalues are?`,
+                                answer: `${a}, ${a}`,
+                                explanation: `Diagonal matrix: eigenvalues = diagonal elements = ${a}, ${a}`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 2;
+                            return {
+                                question: `Characteristic equation of [${a} 0; 0 ${a}] is (λ - ?)^2 = 0`,
+                                answer: a.toString(),
+                                explanation: `For diagonal matrix [${a} 0; 0 ${a}], characteristic equation is (λ - ${a})^2 = 0`
+                            };
+                        }
+                    } else if (linearType === 'transformations') {
+                        const transTypes = ['rotation', 'scaling', 'reflection'];
+                        const transType = transTypes[Math.floor(Math.random() * transTypes.length)];
+                        
+                        if (transType === 'rotation') {
+                            const angle = 90;
+                            return {
+                                question: `Rotation matrix for ${angle}° counterclockwise is [0 -1; 1 0]. What is the (1,1) entry?`,
+                                answer: '0',
+                                explanation: `Rotation matrix [cos(90°) -sin(90°); sin(90°) cos(90°)] = [0 -1; 1 0], (1,1) entry = 0`
+                            };
+                        } else if (transType === 'scaling') {
+                            const scale = Math.floor(Math.random() * 3) + 2;
+                            return {
+                                question: `Scaling matrix with factor ${scale} is [${scale} 0; 0 ${scale}]. What is the determinant?`,
+                                answer: (scale * scale).toString(),
+                                explanation: `det = ${scale} × ${scale} - 0 × 0 = ${scale * scale}`
+                            };
+                        } else {
+                            return {
+                                question: `Reflection across x-axis matrix is [1 0; 0 -1]. What is the (2,2) entry?`,
+                                answer: '-1',
+                                explanation: `Reflection matrix [1 0; 0 -1] has (2,2) entry = -1`
+                            };
+                        }
+                    } else if (linearType === 'systems') {
+                        const sysTypes = ['consistent', 'inconsistent', 'homogeneous'];
+                        const sysType = sysTypes[Math.floor(Math.random() * sysTypes.length)];
+                        
+                        if (sysType === 'consistent') {
+                            const x = Math.floor(Math.random() * 5) + 1;
+                            const y = Math.floor(Math.random() * 5) + 1;
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            const b = Math.floor(Math.random() * 3) + 1;
+                            const c1 = a * x + b * y;
+                            const c2 = a * x + b * y;
+                            return {
+                                question: `System ${a}x + ${b}y = ${c1}, ${a}x + ${b}y = ${c2} has how many solutions?`,
+                                answer: 'infinite',
+                                explanation: `Identical equations: infinite solutions (same line)`
+                            };
+                        } else if (sysType === 'inconsistent') {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            const b = Math.floor(Math.random() * 3) + 1;
+                            const c1 = Math.floor(Math.random() * 10) + 5;
+                            const c2 = c1 + 1;
+                            return {
+                                question: `System ${a}x + ${b}y = ${c1}, ${a}x + ${b}y = ${c2} has how many solutions?`,
+                                answer: '0',
+                                explanation: `Parallel lines with different constants: no solution`
+                            };
+                        } else {
+                            return {
+                                question: `Homogeneous system Ax = 0 always has what solution?`,
+                                answer: 'x = 0',
+                                explanation: `Homogeneous system always has trivial solution x = 0`
+                            };
+                        }
+                    } else if (linearType === 'cross_product') {
+                        const a = Math.floor(Math.random() * 4) + 1;
+                        const b = Math.floor(Math.random() * 4) + 1;
+                        const crossProduct = a * b;
+                        return {
+                            question: `(0, 0, ${a}) × (0, ${b}, 0) = ?`,
+                            answer: `(${-crossProduct}, 0, 0)`,
+                            explanation: `Cross product = (0×0 - ${a}×${b}, ${a}×0 - 0×0, 0×${b} - 0×0) = (${-crossProduct}, 0, 0)`
+                        };
+                    } else if (linearType === 'matrix_ops') {
+                        const a = Math.floor(Math.random() * 4) + 1;
+                        const b = Math.floor(Math.random() * 4) + 1;
+                        const c = Math.floor(Math.random() * 4) + 1;
+                        const d = Math.floor(Math.random() * 4) + 1;
+                        const det = a * d - b * c;
+                        return {
+                            question: `det([${a} ${b}; ${c} ${d}]) = ?`,
+                            answer: det.toString(),
+                            explanation: `det = ${a} × ${d} - ${b} × ${c} = ${a*d} - ${b*c} = ${det}`
+                        };
+                    } else if (linearType === 'rank') {
+                        const rankTypes = ['full_rank', 'rank_deficient'];
+                        const rankType = rankTypes[Math.floor(Math.random() * rankType.length)];
+                        
+                        if (rankType === 'full_rank') {
+                            const a = Math.floor(Math.random() * 3) + 2;
+                            return {
+                                question: `Rank of [${a} 0; 0 ${a}] = ?`,
+                                answer: '2',
+                                explanation: `Diagonal matrix with non-zero diagonal elements has full rank = 2`
+                            };
+                        } else {
+                            return {
+                                question: `Rank of [1 1; 1 1] = ?`,
+                                answer: '1',
+                                explanation: `Identical rows: rank = 1 (linearly dependent)`
+                            };
+                        }
+                    } else {
+                        return {
+                            question: `Nullspace of [1 0; 0 1] is?`,
+                            answer: '{0}',
+                            explanation: `Identity matrix has trivial nullspace: only the zero vector`
+                        };
+                    }
+
+                case 6: // Differential Equations
+                    const deTypes = ['first_order', 'word_problem', 'separable', 'linear', 'homogeneous', 'initial_value', 'equilibrium', 'phase_portrait'];
+                    const deType = deTypes[Math.floor(Math.random() * deTypes.length)];
+                    
+                    if (deType === 'word_problem') {
+                        const diffEqWordProblems = [
+                            () => {
+                                const k = Math.floor(Math.random() * 3) + 1;
+                                const initialPop = Math.floor(Math.random() * 500) + 1000;
+                                const time = Math.floor(Math.random() * 3) + 2;
+                                const finalPop = Math.round(initialPop * Math.exp(k * time / 10));
+                                return {
+                                    question: `A bacteria population grows according to dP/dt = 0.${k}P. If initial population is ${initialPop}, what is P after ${time} hours? (Use P = P0 × e^(0.${k}t))`,
+                                    answer: finalPop.toString(),
+                                    explanation: `P(t) = ${initialPop} × e^(0.${k} × ${time}) = ${initialPop} × e^(${k*time/10}) = ${finalPop}`
+                                };
+                            },
+                            () => {
+                                const rate = Math.floor(Math.random() * 20) + 30;
+                                const time = Math.floor(Math.random() * 4) + 2;
+                                const amount = rate * time;
+                                return {
+                                    question: `Water flows into a tank at constant rate ${rate} L/min. How much water enters in ${time} minutes? (dV/dt = ${rate})`,
+                                    answer: amount.toString(),
+                                    explanation: `V = integral of ${rate} dt = ${rate}t + C. In ${time} min: V = ${rate} × ${time} = ${amount} L`
+                                };
+                            },
+                            () => {
+                                const temp = Math.floor(Math.random() * 20) + 70;
+                                const ambient = Math.floor(Math.random() * 10) + 20;
+                                const k = Math.floor(Math.random() * 3) + 1;
+                                const time = Math.floor(Math.random() * 3) + 2;
+                                const finalTemp = ambient + (temp - ambient) * Math.exp(-k * time / 10);
+                                return {
+                                    question: `Coffee cools from ${temp}°C to room temperature ${ambient}°C. Rate: dT/dt = -0.${k}(T-${ambient}). After ${time} min, temperature is? (round to 1 decimal)`,
+                                    answer: finalTemp.toFixed(1),
+                                    explanation: `T(t) = ${ambient} + (${temp}-${ambient})e^(-0.${k}t) = ${finalTemp.toFixed(1)}°C`
+                                };
+                            },
+                            () => {
+                                const mass = Math.floor(Math.random() * 5) + 2;
+                                const velocity = Math.floor(Math.random() * 20) + 30;
+                                const momentum = mass * velocity;
+                                return {
+                                    question: `Object of mass ${mass} kg moves at ${velocity} m/s. What is momentum? (p = mv)`,
+                                    answer: momentum.toString(),
+                                    explanation: `Momentum = mass × velocity = ${mass} × ${velocity} = ${momentum} kg·m/s`
+                                };
+                            },
+                            () => {
+                                const resistance = Math.floor(Math.random() * 10) + 5;
+                                const voltage = Math.floor(Math.random() * 20) + 10;
+                                const current = voltage / resistance;
+                                return {
+                                    question: `Circuit has resistance ${resistance}Ω and voltage ${voltage}V. What is current? (I = V/R)`,
+                                    answer: current.toFixed(2),
+                                    explanation: `Current = voltage/resistance = ${voltage}/${resistance} = ${current.toFixed(2)} A`
+                                };
+                            }
+                        ];
+                        
+                        const selectedProblem = diffEqWordProblems[Math.floor(Math.random() * diffEqWordProblems.length)];
+                        return selectedProblem();
+                    } else if (deType === 'first_order') {
+                        const foTypes = ['separable', 'linear', 'exact'];
+                        const foType = foTypes[Math.floor(Math.random() * foTypes.length)];
+                        
+                        if (foType === 'separable') {
+                            const k = Math.floor(Math.random() * 5) + 1;
+                            return {
+                                question: `General solution of dy/dx = ${k}y is?`,
+                                answer: `Ce^(${k}x)`,
+                                explanation: `Separable: dy/y = ${k}dx, integrate: ln|y| = ${k}x + C, so y = Ce^(${k}x)`
+                            };
+                        } else if (foType === 'linear') {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            const b = Math.floor(Math.random() * 5) + 1;
+                            return {
+                                question: `Solution of dy/dx + ${a}y = ${b}?`,
+                                answer: `y = ${b}/${a} + Ce^(-${a}x)`,
+                                explanation: `Linear DE: integrating factor e^(${a}x), solution y = ${b}/${a} + Ce^(-${a}x)`
+                            };
+                        } else {
+                            const k = Math.floor(Math.random() * 4) + 1;
+                            return {
+                                question: `dy/dx = ${k}x/y is what type of DE?`,
+                                answer: 'separable',
+                                explanation: `Can write as y dy = ${k}x dx, so it's separable`
+                            };
+                        }
+                    } else if (deType === 'separable') {
+                        const sepTypes = ['basic', 'logarithmic'];
+                        const sepType = sepTypes[Math.floor(Math.random() * sepType.length)];
+                        
+                        if (sepType === 'basic') {
+                            const k = Math.floor(Math.random() * 4) + 1;
+                            return {
+                                question: `Separate variables in dy/dx = ${k}xy`,
+                                answer: `dy/y = ${k}x dx`,
+                                explanation: `Divide both sides by y: dy/y = ${k}x dx`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `Separate variables in dy/dx = ${a}y/x`,
+                                answer: `dy/y = ${a}dx/x`,
+                                explanation: `Divide both sides by y: dy/y = ${a}dx/x`
+                            };
+                        }
+                    } else if (deType === 'linear') {
+                        const linTypes = ['integrating_factor', 'standard_form'];
+                        const linType = linTypes[Math.floor(Math.random() * linType.length)];
+                        
+                        if (linType === 'integrating_factor') {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `Integrating factor for dy/dx + ${a}y = f(x) is?`,
+                                answer: `e^(${a}x)`,
+                                explanation: `Integrating factor = e^(∫${a}dx) = e^(${a}x)`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            const b = Math.floor(Math.random() * 5) + 1;
+                            return {
+                                question: `Standard form of dy/dx = ${a}y + ${b}?`,
+                                answer: `dy/dx - ${a}y = ${b}`,
+                                explanation: `Move ${a}y to left: dy/dx - ${a}y = ${b}`
+                            };
+                        }
+                    } else if (deType === 'homogeneous') {
+                        const homTypes = ['degree', 'substitution'];
+                        const homType = homTypes[Math.floor(Math.random() * homType.length)];
+                        
+                        if (homType === 'degree') {
+                            const n = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `Degree of homogeneity for dy/dx = (x^${n} + y^${n})/(xy) is?`,
+                                answer: (n-1).toString(),
+                                explanation: `Replace x→tx, y→ty: degree = ${n-1}`
+                            };
+                        } else {
+                            return {
+                                question: `For homogeneous DE dy/dx = f(y/x), what substitution is used?`,
+                                answer: 'v = y/x',
+                                explanation: `Substitution v = y/x converts to separable DE`
+                            };
+                        }
+                    } else if (deType === 'initial_value') {
+                        const ivTypes = ['exponential', 'constant'];
+                        const ivType = ivTypes[Math.floor(Math.random() * ivType.length)];
+                        
+                        if (ivType === 'exponential') {
+                            const k = Math.floor(Math.random() * 3) + 1;
+                            const y0 = Math.floor(Math.random() * 10) + 5;
+                            return {
+                                question: `Solve dy/dx = ${k}y, y(0) = ${y0}`,
+                                answer: `${y0}e^(${k}x)`,
+                                explanation: `General solution: y = Ce^(${k}x). y(0) = ${y0} = C, so y = ${y0}e^(${k}x)`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            const b = Math.floor(Math.random() * 5) + 1;
+                            const y0 = Math.floor(Math.random() * 10) + 5;
+                            return {
+                                question: `Solve dy/dx = ${a}, y(0) = ${y0}`,
+                                answer: `${a}x + ${y0}`,
+                                explanation: `dy/dx = ${a}, so y = ${a}x + C. y(0) = ${y0} = C, so y = ${a}x + ${y0}`
+                            };
+                        }
+                    } else if (deType === 'equilibrium') {
+                        const eqTypes = ['stable', 'unstable'];
+                        const eqType = eqTypes[Math.floor(Math.random() * eqType.length)];
+                        
+                        if (eqType === 'stable') {
+                            const k = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `For dy/dx = -${k}y, equilibrium point y = 0 is?`,
+                                answer: 'stable',
+                                explanation: `f'(0) = -${k} < 0, so equilibrium is stable`
+                            };
+                        } else {
+                            const k = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `For dy/dx = ${k}y, equilibrium point y = 0 is?`,
+                                answer: 'unstable',
+                                explanation: `f'(0) = ${k} > 0, so equilibrium is unstable`
+                            };
+                        }
+                    } else {
+                        return {
+                            question: `Phase portrait shows what?`,
+                            answer: 'solution behavior',
+                            explanation: `Phase portrait shows how solutions behave over time`
+                        };
+                    }
+
+                case 7: // Complex Analysis
+                    const complexTypes = ['basic', 'word_problem', 'residues', 'contour_integration', 'analytic_functions', 'cauchy_riemann', 'power_series', 'laurent_series', 'singularities'];
+                    const complexType = complexTypes[Math.floor(Math.random() * complexTypes.length)];
+                    
+                    if (complexType === 'word_problem') {
+                        const complexWordProblems = [
+                            () => {
+                                const resistance1 = Math.floor(Math.random() * 5) + 3;
+                                const resistance2 = Math.floor(Math.random() * 5) + 4;
+                                const impedance = Math.sqrt(resistance1*resistance1 + resistance2*resistance2);
+                                return {
+                                    question: `An AC circuit has impedance Z = ${resistance1} + ${resistance2}i ohms. What is the magnitude |Z| (round to 1 decimal)?`,
+                                    answer: impedance.toFixed(1),
+                                    explanation: `|Z| = sqrt(${resistance1}^2 + ${resistance2}^2) = sqrt(${resistance1*resistance1} + ${resistance2*resistance2}) = ${impedance.toFixed(1)} ohms`
+                                };
+                            },
+                            () => {
+                                const real = Math.floor(Math.random() * 6) + 2;
+                                const imag = Math.floor(Math.random() * 6) + 2;
+                                const conjugate = `${real} - ${imag}i`;
+                                return {
+                                    question: `A signal has complex representation ${real} + ${imag}i. What is its complex conjugate?`,
+                                    answer: conjugate,
+                                    explanation: `Complex conjugate of a + bi is a - bi, so (${real} + ${imag}i)* = ${conjugate}`
+                                };
+                            },
+                            () => {
+                                const magnitude = Math.floor(Math.random() * 5) + 3;
+                                const angle = Math.floor(Math.random() * 45) + 15;
+                                const angleRad = angle * Math.PI / 180;
+                                const real = magnitude * Math.cos(angleRad);
+                                const imag = magnitude * Math.sin(angleRad);
+                                return {
+                                    question: `Complex number has magnitude ${magnitude} and angle ${angle}°. What is the real part (round to 2 decimals)?`,
+                                    answer: real.toFixed(2),
+                                    explanation: `Real part = |z|cos(θ) = ${magnitude}cos(${angle}°) = ${real.toFixed(2)}`
+                                };
+                            },
+                            () => {
+                                const freq1 = Math.floor(Math.random() * 10) + 20;
+                                const freq2 = Math.floor(Math.random() * 10) + 30;
+                                const beatFreq = Math.abs(freq1 - freq2);
+                                return {
+                                    question: `Two waves have frequencies ${freq1} Hz and ${freq2} Hz. What is the beat frequency?`,
+                                    answer: beatFreq.toString(),
+                                    explanation: `Beat frequency = |f1 - f2| = |${freq1} - ${freq2}| = ${beatFreq} Hz`
+                                };
+                            },
+                            () => {
+                                const amplitude = Math.floor(Math.random() * 5) + 2;
+                                const phase = Math.floor(Math.random() * 90) + 10;
+                                const phaseRad = phase * Math.PI / 180;
+                                const realAmp = amplitude * Math.cos(phaseRad);
+                                return {
+                                    question: `Wave has amplitude ${amplitude} and phase ${phase}°. What is the real amplitude component?`,
+                                    answer: realAmp.toFixed(2),
+                                    explanation: `Real component = A cos(φ) = ${amplitude}cos(${phase}°) = ${realAmp.toFixed(2)}`
+                                };
+                            }
+                        ];
+                        
+                        const selectedProblem = complexWordProblems[Math.floor(Math.random() * complexWordProblems.length)];
+                        return selectedProblem();
+                    } else if (complexType === 'basic') {
+                        const basicTypes = ['arithmetic', 'conjugate', 'modulus', 'argument'];
+                        const basicType = basicTypes[Math.floor(Math.random() * basicType.length)];
+                        
+                        if (basicType === 'arithmetic') {
+                            const a = Math.floor(Math.random() * 5) + 1;
+                            const b = Math.floor(Math.random() * 5) + 1;
+                            const c = Math.floor(Math.random() * 5) + 1;
+                            const d = Math.floor(Math.random() * 5) + 1;
+                            const realPart = a * c - b * d;
+                            const imagPart = a * d + b * c;
+                            return {
+                                question: `(${a} + ${b}i)(${c} + ${d}i) = ? (give real part)`,
+                                answer: realPart.toString(),
+                                explanation: `(${a} + ${b}i)(${c} + ${d}i) = ${a*c} + ${a*d}i + ${b*c}i + ${b*d}i² = ${realPart} + ${imagPart}i`
+                            };
+                        } else if (basicType === 'conjugate') {
+                            const a = Math.floor(Math.random() * 6) + 2;
+                            const b = Math.floor(Math.random() * 6) + 2;
+                            return {
+                                question: `Conjugate of ${a} + ${b}i is?`,
+                                answer: `${a} - ${b}i`,
+                                explanation: `Complex conjugate changes sign of imaginary part: ${a} - ${b}i`
+                            };
+                        } else if (basicType === 'modulus') {
+                            const a = Math.floor(Math.random() * 5) + 1;
+                            const b = Math.floor(Math.random() * 5) + 1;
+                            const modulus = Math.sqrt(a*a + b*b);
+                            return {
+                                question: `|${a} + ${b}i| = ?`,
+                                answer: modulus.toFixed(2),
+                                explanation: `|a + bi| = sqrt(a² + b²) = sqrt(${a*a} + ${b*b}) = ${modulus.toFixed(2)}`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 4) + 1;
+                            const b = Math.floor(Math.random() * 4) + 1;
+                            const angle = Math.atan(b/a) * 180 / Math.PI;
+                            return {
+                                question: `Argument of ${a} + ${b}i is? (degrees, round to 1 decimal)`,
+                                answer: angle.toFixed(1),
+                                explanation: `arg(a + bi) = arctan(b/a) = arctan(${b}/${a}) = ${angle.toFixed(1)}°`
+                            };
+                        }
+                    } else if (complexType === 'residues') {
+                        const resTypes = ['simple_pole', 'order', 'cauchy'];
+                        const resType = resTypes[Math.floor(Math.random() * resType.length)];
+                        
+                        if (resType === 'simple_pole') {
+                            const a = Math.floor(Math.random() * 5) + 1;
+                            return {
+                                question: `Residue of f(z) = 1/(z - ${a}) at z = ${a} is?`,
+                                answer: '1',
+                                explanation: `Simple pole: Res(f, ${a}) = lim(z→${a}) (z-${a})f(z) = 1`
+                            };
+                        } else if (resType === 'order') {
+                            const n = Math.floor(Math.random() * 3) + 2;
+                            return {
+                                question: `f(z) = 1/(z - 1)^${n} has what type of singularity at z = 1?`,
+                                answer: `pole of order ${n}`,
+                                explanation: `Denominator has factor (z-1)^${n}, so pole of order ${n}`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `Cauchy's residue theorem: ∮f(z)dz = 2πi × ?`,
+                                answer: 'sum of residues',
+                                explanation: `∮f(z)dz = 2πi × sum of residues inside contour`
+                            };
+                        }
+                    } else if (complexType === 'contour_integration') {
+                        const contTypes = ['circle', 'cauchy', 'deformation'];
+                        const contType = contTypes[Math.floor(Math.random() * contType.length)];
+                        
+                        if (contType === 'circle') {
+                            const r = Math.floor(Math.random() * 3) + 2;
+                            return {
+                                question: `∮dz/z around |z| = ${r} = ?`,
+                                answer: '2πi',
+                                explanation: `∮dz/z = 2πi for any contour enclosing origin`
+                            };
+                        } else if (contType === 'cauchy') {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `∮1/(z-${a}) dz around |z-${a}| = 1 = ?`,
+                                answer: '2πi',
+                                explanation: `Cauchy's integral formula: ∮1/(z-${a}) dz = 2πi × f(${a}) = 2πi`
+                            };
+                        } else {
+                            return {
+                                question: `Contour deformation principle allows what?`,
+                                answer: 'deforming path',
+                                explanation: `Can deform contour without changing integral value (if no singularities crossed)`
+                            };
+                        }
+                    } else if (complexType === 'analytic_functions') {
+                        const analTypes = ['definition', 'properties', 'examples'];
+                        const analType = analTypes[Math.floor(Math.random() * analType.length)];
+                        
+                        if (analType === 'definition') {
+                            return {
+                                question: `Function f(z) is analytic if it has what at every point?`,
+                                answer: 'derivative',
+                                explanation: `f(z) is analytic if f'(z) exists at every point in domain`
+                            };
+                        } else if (analType === 'properties') {
+                            return {
+                                question: `Analytic functions satisfy what equations?`,
+                                answer: 'Cauchy-Riemann',
+                                explanation: `Analytic functions satisfy Cauchy-Riemann equations`
+                            };
+                        } else {
+                            const examples = ['z²', 'e^z', 'sin(z)', 'cos(z)'];
+                            const example = examples[Math.floor(Math.random() * examples.length)];
+                            return {
+                                question: `Is ${example} analytic everywhere?`,
+                                answer: 'yes',
+                                explanation: `${example} is analytic everywhere in complex plane`
+                            };
+                        }
+                    } else if (complexType === 'cauchy_riemann') {
+                        const crTypes = ['equations', 'conditions'];
+                        const crType = crTypes[Math.floor(Math.random() * crType.length)];
+                        
+                        if (crType === 'equations') {
+                            return {
+                                question: `Cauchy-Riemann equations are ∂u/∂x = ? and ∂u/∂y = ?`,
+                                answer: '∂v/∂y, -∂v/∂x',
+                                explanation: `CR equations: ∂u/∂x = ∂v/∂y and ∂u/∂y = -∂v/∂x`
+                            };
+                        } else {
+                            return {
+                                question: `CR equations are necessary and sufficient for what?`,
+                                answer: 'analyticity',
+                                explanation: `CR equations are necessary and sufficient for analyticity`
+                            };
+                        }
+                    } else if (complexType === 'power_series') {
+                        const psTypes = ['radius', 'convergence', 'taylor'];
+                        const psType = psTypes[Math.floor(Math.random() * psType.length)];
+                        
+                        if (psType === 'radius') {
+                            const r = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `Power series converges for |z| < ${r}. What is radius of convergence?`,
+                                answer: r.toString(),
+                                explanation: `Radius of convergence is ${r}`
+                            };
+                        } else if (psType === 'convergence') {
+                            return {
+                                question: `Power series converges absolutely inside what?`,
+                                answer: 'radius of convergence',
+                                explanation: `Power series converges absolutely inside radius of convergence`
+                            };
+                        } else {
+                            const a = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `Taylor series of e^z around z = ${a} converges for what z?`,
+                                answer: 'all z',
+                                explanation: `e^z is entire function, so Taylor series converges for all z`
+                            };
+                        }
+                    } else if (complexType === 'laurent_series') {
+                        const lsTypes = ['definition', 'region'];
+                        const lsType = lsTypes[Math.floor(Math.random() * lsType.length)];
+                        
+                        if (lsType === 'definition') {
+                            return {
+                                question: `Laurent series has what types of terms?`,
+                                answer: 'positive and negative powers',
+                                explanation: `Laurent series: Σaₙ(z-z₀)ⁿ for both positive and negative n`
+                            };
+                        } else {
+                            const r1 = Math.floor(Math.random() * 2) + 1;
+                            const r2 = r1 + Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `Laurent series converges in annulus ${r1} < |z| < ${r2}. What is inner radius?`,
+                                answer: r1.toString(),
+                                explanation: `Inner radius of convergence is ${r1}`
+                            };
+                        }
+                    } else {
+                        const singTypes = ['removable', 'pole', 'essential'];
+                        const singType = singTypes[Math.floor(Math.random() * singType.length)];
+                        
+                        if (singType === 'removable') {
+                            return {
+                                question: `What type of singularity can be removed by redefining function?`,
+                                answer: 'removable',
+                                explanation: `Removable singularity can be removed by redefining function at that point`
+                            };
+                        } else if (singType === 'pole') {
+                            const n = Math.floor(Math.random() * 3) + 1;
+                            return {
+                                question: `f(z) = 1/(z-1)^${n} has what at z = 1?`,
+                                answer: `pole of order ${n}`,
+                                explanation: `Denominator has factor (z-1)^${n}, so pole of order ${n}`
+                            };
+                        } else {
+                            return {
+                                question: `Essential singularity has what property?`,
+                                answer: 'infinite negative powers',
+                                explanation: `Essential singularity has infinitely many negative powers in Laurent series`
+                            };
+                        }
+                    }
+
+                default:
+                    return generateProblem(0);
+            }
+        }
+
+        // Initialize the game when the page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
