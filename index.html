@@ -1311,10 +1311,28 @@
                         } else {
                             const a = Math.floor(Math.random() * 4) + 2;
                             const b = Math.floor(Math.random() * 6) + 3;
+                            // f(x) = x^3 - a x^2 + b x
+                            // f'(x) = 3x^2 - 2a x + b
+                            const A = 3;
+                            const B = -2 * a;
+                            const C = b;
+                            const discriminant = B * B - 4 * A * C;
+                            let answer, explanation;
+                            if (discriminant < 0) {
+                                answer = 'all real x';
+                                explanation = `f'(x) = 3x² - ${2*a}x + ${b} has no real roots (discriminant < 0), so always positive (increasing everywhere)`;
+                            } else {
+                                const sqrtD = Math.sqrt(discriminant);
+                                const x1 = ((-B + sqrtD) / (2 * A));
+                                const x2 = ((-B - sqrtD) / (2 * A));
+                                const [left, right] = [Math.min(x1, x2), Math.max(x1, x2)];
+                                answer = `(-∞, ${left.toFixed(2)}) ∪ (${right.toFixed(2)}, ∞)`;
+                                explanation = `f'(x) = 3x² - ${2*a}x + ${b}. Roots: x = ${left.toFixed(2)}, ${right.toFixed(2)}. Increasing where f'(x) > 0: (-∞, ${left.toFixed(2)}) ∪ (${right.toFixed(2)}, ∞)`;
+                            }
                             return {
                                 question: `Where is f(x) = x³ - ${a}x² + ${b}x increasing? (f'(x) > 0)`,
-                                answer: 'need f\'(x)',
-                                explanation: `f'(x) = 3x² - ${2*a}x + ${b}. Set > 0 to find intervals.`
+                                answer: answer,
+                                explanation: explanation
                             };
                         }
                     } else if (calcType === 'related_rates') {
@@ -1872,56 +1890,111 @@
                     if (complexType === 'word_problem') {
                         const complexWordProblems = [
                             () => {
-                                const resistance1 = Math.floor(Math.random() * 5) + 3;
-                                const resistance2 = Math.floor(Math.random() * 5) + 4;
-                                const impedance = Math.sqrt(resistance1*resistance1 + resistance2*resistance2);
+                                // Contour Integration Application
+                                const r = Math.floor(Math.random() * 3) + 2;
+                                const a = Math.floor(Math.random() * 3) + 1;
+                                const integral = 2 * Math.PI * a;
                                 return {
-                                    question: `An AC circuit has impedance Z = ${resistance1} + ${resistance2}i ohms. What is the magnitude |Z| (round to 1 decimal)?`,
-                                    answer: impedance.toFixed(1),
-                                    explanation: `|Z| = sqrt(${resistance1}^2 + ${resistance2}^2) = sqrt(${resistance1*resistance1} + ${resistance2*resistance2}) = ${impedance.toFixed(1)} ohms`
+                                    question: `Evaluate ∮(z+${a})/(z-${a}) dz around |z| = ${r} where |${a}| < ${r}. Use residue theorem.`,
+                                    answer: integral.toString(),
+                                    explanation: `f(z) = (z+${a})/(z-${a}) has simple pole at z = ${a}. Residue = lim(z→${a}) (z-${a})f(z) = ${a}+${a} = ${2*a}. Integral = 2πi × ${2*a} = ${integral}πi`
                                 };
                             },
                             () => {
-                                const real = Math.floor(Math.random() * 6) + 2;
-                                const imag = Math.floor(Math.random() * 6) + 2;
-                                const conjugate = `${real} - ${imag}i`;
+                                // Residue Theorem Application
+                                const a = Math.floor(Math.random() * 3) + 1;
+                                const b = Math.floor(Math.random() * 3) + 1;
+                                const residue = 1 / (a - b);
                                 return {
-                                    question: `A signal has complex representation ${real} + ${imag}i. What is its complex conjugate?`,
-                                    answer: conjugate,
-                                    explanation: `Complex conjugate of a + bi is a - bi, so (${real} + ${imag}i)* = ${conjugate}`
+                                    question: `Find residue of f(z) = 1/((z-${a})(z-${b})) at z = ${a} where ${a} ≠ ${b}.`,
+                                    answer: residue.toString(),
+                                    explanation: `Res(f, ${a}) = lim(z→${a}) (z-${a})f(z) = lim(z→${a}) 1/(z-${b}) = 1/(${a}-${b}) = ${residue}`
                                 };
                             },
                             () => {
-                                const magnitude = Math.floor(Math.random() * 5) + 3;
-                                const angle = Math.floor(Math.random() * 45) + 15;
-                                const angleRad = angle * Math.PI / 180;
-                                const real = magnitude * Math.cos(angleRad);
-                                const imag = magnitude * Math.sin(angleRad);
+                                // Analytic Function Properties
+                                const x = Math.floor(Math.random() * 5) + 1;
+                                const y = Math.floor(Math.random() * 5) + 1;
+                                const harmonic = x * x - y * y;
                                 return {
-                                    question: `Complex number has magnitude ${magnitude} and angle ${angle}°. What is the real part (round to 2 decimals)?`,
-                                    answer: real.toFixed(2),
-                                    explanation: `Real part = |z|cos(θ) = ${magnitude}cos(${angle}°) = ${real.toFixed(2)}`
+                                    question: `Show u(x,y) = ${x}² - ${y}² is harmonic. What is u(${x},${y})?`,
+                                    answer: harmonic.toString(),
+                                    explanation: `∇²u = ∂²u/∂x² + ∂²u/∂y² = 2 - 2 = 0, so harmonic. u(${x},${y}) = ${x}² - ${y}² = ${harmonic}`
                                 };
                             },
                             () => {
-                                const freq1 = Math.floor(Math.random() * 10) + 20;
-                                const freq2 = Math.floor(Math.random() * 10) + 30;
-                                const beatFreq = Math.abs(freq1 - freq2);
+                                // Cauchy's Integral Formula Application
+                                const a = Math.floor(Math.random() * 3) + 1;
+                                const n = Math.floor(Math.random() * 2) + 1;
+                                const result = n === 1 ? 2 * Math.PI : 0;
                                 return {
-                                    question: `Two waves have frequencies ${freq1} Hz and ${freq2} Hz. What is the beat frequency?`,
-                                    answer: beatFreq.toString(),
-                                    explanation: `Beat frequency = |f1 - f2| = |${freq1} - ${freq2}| = ${beatFreq} Hz`
+                                    question: `Evaluate ∮1/(z-${a})^${n} dz around |z-${a}| = 1. Use Cauchy's integral formula.`,
+                                    answer: result.toString(),
+                                    explanation: `For n = ${n}: if n = 1, integral = 2πi × f(${a}) = 2πi; if n > 1, integral = 2πi × f^(${n-1})(${a})/(${n-1})! = 0`
                                 };
                             },
                             () => {
-                                const amplitude = Math.floor(Math.random() * 5) + 2;
-                                const phase = Math.floor(Math.random() * 90) + 10;
-                                const phaseRad = phase * Math.PI / 180;
-                                const realAmp = amplitude * Math.cos(phaseRad);
+                                // Laurent Series Application
+                                const r1 = Math.floor(Math.random() * 2) + 1;
+                                const r2 = r1 + Math.floor(Math.random() * 3) + 1;
+                                const coefficient = 1;
                                 return {
-                                    question: `Wave has amplitude ${amplitude} and phase ${phase}°. What is the real amplitude component?`,
-                                    answer: realAmp.toFixed(2),
-                                    explanation: `Real component = A cos(φ) = ${amplitude}cos(${phase}°) = ${realAmp.toFixed(2)}`
+                                    question: `Find coefficient of 1/(z-1) in Laurent series of f(z) = 1/(z-1) in annulus ${r1} < |z-1| < ${r2}.`,
+                                    answer: coefficient.toString(),
+                                    explanation: `f(z) = 1/(z-1) already has form Σaₙ(z-1)ⁿ. Coefficient of 1/(z-1) term is a₋₁ = 1`
+                                };
+                            },
+                            () => {
+                                // Maximum Modulus Principle
+                                const r = Math.floor(Math.random() * 3) + 2;
+                                const maxValue = r * r;
+                                return {
+                                    question: `Find maximum of |f(z)| where f(z) = z² on |z| ≤ ${r}. Use maximum modulus principle.`,
+                                    answer: maxValue.toString(),
+                                    explanation: `Maximum occurs on boundary |z| = ${r}. |f(z)| = |z²| = |z|² = ${r}² = ${maxValue}`
+                                };
+                            },
+                            () => {
+                                // Argument Principle Application
+                                const zeros = Math.floor(Math.random() * 3) + 1;
+                                const poles = Math.floor(Math.random() * 2);
+                                const winding = zeros - poles;
+                                return {
+                                    question: `Function f(z) has ${zeros} zeros and ${poles} poles inside contour C. What is winding number of f(C) around origin?`,
+                                    answer: winding.toString(),
+                                    explanation: `Argument principle: winding number = number of zeros - number of poles = ${zeros} - ${poles} = ${winding}`
+                                };
+                            },
+                            () => {
+                                // Conformal Mapping Application
+                                const angle = Math.floor(Math.random() * 30) + 30;
+                                const mappedAngle = angle;
+                                return {
+                                    question: `Conformal map w = z² maps angle ${angle}° to what angle in w-plane?`,
+                                    answer: mappedAngle.toString(),
+                                    explanation: `w = z² doubles angles: arg(w) = 2arg(z). So ${angle}° → ${2*angle}° = ${mappedAngle}°`
+                                };
+                            },
+                            () => {
+                                // Poisson Integral Formula
+                                const r = Math.floor(Math.random() * 3) + 2;
+                                const theta = Math.floor(Math.random() * 45) + 15;
+                                const u0 = Math.floor(Math.random() * 10) + 5;
+                                const value = u0 * (r * r - 1) / (r * r + 1 - 2 * r * Math.cos(theta * Math.PI / 180));
+                                return {
+                                    question: `Solve Laplace's equation in unit disk with boundary condition u(1,θ) = ${u0}. What is u(${r},${theta}°)? (round to 2 decimals)`,
+                                    answer: value.toFixed(2),
+                                    explanation: `Poisson integral: u(r,θ) = (1-r²)/(2π) ∫u(1,φ)/(1+r²-2r cos(θ-φ)) dφ. For constant u(1,θ) = ${u0}: u(${r},${theta}°) = ${value.toFixed(2)}`
+                                };
+                            },
+                            () => {
+                                // Residue at Infinity
+                                const a = Math.floor(Math.random() * 3) + 1;
+                                const residue = -a;
+                                return {
+                                    question: `Find residue at infinity of f(z) = ${a}z/(z-1). Use Res(f,∞) = -Res(1/z² f(1/z), 0).`,
+                                    answer: residue.toString(),
+                                    explanation: `1/z² f(1/z) = 1/z² × ${a}/z / (1/z-1) = ${a}/(z(1-z)). Residue at z=0 is ${a}, so Res(f,∞) = -${a} = ${residue}`
                                 };
                             }
                         ];
