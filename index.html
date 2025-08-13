@@ -496,7 +496,7 @@
             if (!userAnswer || !gameState.currentProblem) return;
 
             const correct = userAnswer.toLowerCase() === gameState.currentProblem.answer.toLowerCase() ||
-                           Math.abs(parseFloat(userAnswer) - parseFloat(gameState.currentProblem.answer)) < 0.01;
+                           Math.abs(parseFloat(userAnswer) - parseFloat(gameState.currentProblem.answer)) < 0.1;
 
             const feedbackElement = document.getElementById('feedback');
             document.getElementById('answerInput').disabled = true;
@@ -598,16 +598,17 @@
                                 };
                             },
                             () => {
-                                const hours = Math.floor(Math.random() * 6) + 3;
-                                const wage = Math.floor(Math.random() * 10) + 12;
-                                const overtime = Math.floor(Math.random() * 4);
-                                const regularPay = Math.min(hours, 8) * wage;
-                                const overtimePay = Math.max(0, hours - 8 + overtime) * wage * 1.5;
-                                const totalPay = regularPay + overtimePay;
+                                const hours = Math.floor(Math.random() * 6) + 3; // Regular hours worked
+                                const wage = Math.floor(Math.random() * 10) + 12; // Hourly wage
+                                const overtime = Math.floor(Math.random() * 4); // Overtime hours worked
+                                const regularPay = Math.min(hours, 8) * wage; // Pay for regular hours (up to 8 hours)
+                                const overtimePay = Math.max(0, hours + overtime - 8) * wage * 1.5; // Pay for overtime hours
+                                const totalPay = regularPay + overtimePay; // Total pay
+
                                 return {
-                                    question: `Working ${hours + overtime} hours at $${wage}/hour (1.5x overtime after 8 hours), what is the total pay?`,
+                                    question: `You worked ${hours} regular hours and ${overtime} overtime hours at $${wage}/hour (1.5x overtime after 8 hours). What is the total pay?`,
                                     answer: totalPay.toFixed(2),
-                                    explanation: `Regular: ${Math.min(hours + overtime, 8)} × $${wage} = $${Math.min(hours + overtime, 8) * wage}. Overtime: ${Math.max(0, hours + overtime - 8)} × $${wage} × 1.5 = $${Math.max(0, hours + overtime - 8) * wage * 1.5}. Total: $${totalPay.toFixed(2)}`
+                                    explanation: `Regular: ${Math.min(hours, 8)} × $${wage} = $${regularPay.toFixed(2)}. Overtime: ${Math.max(0, hours + overtime - 8)} × $${wage} × 1.5 = $${overtimePay.toFixed(2)}. Total: $${totalPay.toFixed(2)}`
                                 };
                             }
                         ];
@@ -1472,6 +1473,7 @@
                         const vecTypes = ['dot_product', 'magnitude', 'unit_vector', 'cross_product'];
                         const vecType = vecTypes[Math.floor(Math.random() * vecTypes.length)];
                         
+                                               
                         if (vecType === 'dot_product') {
                             const v1 = [Math.floor(Math.random() * 10) - 5, Math.floor(Math.random() * 10) - 5];
                             const v2 = [Math.floor(Math.random() * 10) - 5, Math.floor(Math.random() * 10) - 5];
@@ -1646,8 +1648,6 @@
                         const b = Math.floor(Math.random() * 4) + 1;
                         const crossProduct = a * b;
                         return {
-                            question: `(0, 0, ${a}) × (0, ${b}, 0) = ?`,
-                            answer: `(${-crossProduct}, 0, 0)`,
                             explanation: `Cross product = (0×0 - ${a}×${b}, ${a}×0 - 0×0, 0×${b} - 0×0) = (${-crossProduct}, 0, 0)`
                         };
                     } else if (linearType === 'matrix_ops') {
@@ -1663,7 +1663,7 @@
                         };
                     } else if (linearType === 'rank') {
                         const rankTypes = ['full_rank', 'rank_deficient'];
-                        const rankType = rankTypes[Math.floor(Math.random() * rankType.length)];
+                        const rankType = rankTypes[Math.floor(Math.random() * rankTypes.length)];
                         
                         if (rankType === 'full_rank') {
                             const a = Math.floor(Math.random() * 3) + 2;
@@ -1779,7 +1779,7 @@
                         }
                     } else if (deType === 'separable') {
                         const sepTypes = ['basic', 'logarithmic'];
-                        const sepType = sepTypes[Math.floor(Math.random() * sepType.length)];
+                        const sepType = sepTypes[Math.floor(Math.random() * sepTypes.length)];
                         
                         if (sepType === 'basic') {
                             const k = Math.floor(Math.random() * 4) + 1;
@@ -1798,7 +1798,7 @@
                         }
                     } else if (deType === 'linear') {
                         const linTypes = ['integrating_factor', 'standard_form'];
-                        const linType = linTypes[Math.floor(Math.random() * linType.length)];
+                        const linType = linTypes[Math.floor(Math.random() * linTypes.length)];
                         
                         if (linType === 'integrating_factor') {
                             const a = Math.floor(Math.random() * 3) + 1;
@@ -1818,7 +1818,7 @@
                         }
                     } else if (deType === 'homogeneous') {
                         const homTypes = ['degree', 'substitution'];
-                        const homType = homTypes[Math.floor(Math.random() * homType.length)];
+                        const homType = homTypes[Math.floor(Math.random() * homTypes.length)];
                         
                         if (homType === 'degree') {
                             const n = Math.floor(Math.random() * 3) + 1;
@@ -1836,7 +1836,7 @@
                         }
                     } else if (deType === 'initial_value') {
                         const ivTypes = ['exponential', 'constant'];
-                        const ivType = ivTypes[Math.floor(Math.random() * ivType.length)];
+                        const ivType = ivTypes[Math.floor(Math.random() * ivTypes.length)];
                         
                         if (ivType === 'exponential') {
                             const k = Math.floor(Math.random() * 3) + 1;
@@ -1858,7 +1858,7 @@
                         }
                     } else if (deType === 'equilibrium') {
                         const eqTypes = ['stable', 'unstable'];
-                        const eqType = eqTypes[Math.floor(Math.random() * eqType.length)];
+                        const eqType = eqTypes[Math.floor(Math.random() * eqTypes.length)];
                         
                         if (eqType === 'stable') {
                             const k = Math.floor(Math.random() * 3) + 1;
@@ -2003,7 +2003,7 @@
                         return selectedProblem();
                     } else if (complexType === 'basic') {
                         const basicTypes = ['arithmetic', 'conjugate', 'modulus', 'argument'];
-                        const basicType = basicTypes[Math.floor(Math.random() * basicType.length)];
+                        const basicType = basicTypes[Math.floor(Math.random() * basicTypes.length)];
                         
                         if (basicType === 'arithmetic') {
                             const a = Math.floor(Math.random() * 5) + 1;
@@ -2046,7 +2046,7 @@
                         }
                     } else if (complexType === 'residues') {
                         const resTypes = ['simple_pole', 'order', 'cauchy'];
-                        const resType = resTypes[Math.floor(Math.random() * resType.length)];
+                        const resType = resTypes[Math.floor(Math.random() * resTypes.length)];
                         
                         if (resType === 'simple_pole') {
                             const a = Math.floor(Math.random() * 5) + 1;
@@ -2072,7 +2072,7 @@
                         }
                     } else if (complexType === 'contour_integration') {
                         const contTypes = ['circle', 'cauchy', 'deformation'];
-                        const contType = contTypes[Math.floor(Math.random() * contType.length)];
+                        const contType = contTypes[Math.floor(Math.random() * contTypes.length)];
                         
                         if (contType === 'circle') {
                             const r = Math.floor(Math.random() * 3) + 2;
@@ -2097,7 +2097,7 @@
                         }
                     } else if (complexType === 'analytic_functions') {
                         const analTypes = ['definition', 'properties', 'examples'];
-                        const analType = analTypes[Math.floor(Math.random() * analType.length)];
+                        const analType = analTypes[Math.floor(Math.random() * analTypes.length)];
                         
                         if (analType === 'definition') {
                             return {
@@ -2122,7 +2122,7 @@
                         }
                     } else if (complexType === 'cauchy_riemann') {
                         const crTypes = ['equations', 'conditions'];
-                        const crType = crTypes[Math.floor(Math.random() * crType.length)];
+                        const crType = crTypes[Math.floor(Math.random() * crTypes.length)];
                         
                         if (crType === 'equations') {
                             return {
@@ -2139,7 +2139,7 @@
                         }
                     } else if (complexType === 'power_series') {
                         const psTypes = ['radius', 'convergence', 'taylor'];
-                        const psType = psTypes[Math.floor(Math.random() * psType.length)];
+                        const psType = psTypes[Math.floor(Math.random() * psTypes.length)];
                         
                         if (psType === 'radius') {
                             const r = Math.floor(Math.random() * 3) + 1;
@@ -2164,7 +2164,7 @@
                         }
                     } else if (complexType === 'laurent_series') {
                         const lsTypes = ['definition', 'region'];
-                        const lsType = lsTypes[Math.floor(Math.random() * lsType.length)];
+                        const lsType = lsTypes[Math.floor(Math.random() * lsTypes.length)];
                         
                         if (lsType === 'definition') {
                             return {
@@ -2183,7 +2183,7 @@
                         }
                     } else {
                         const singTypes = ['removable', 'pole', 'essential'];
-                        const singType = singTypes[Math.floor(Math.random() * singType.length)];
+                        const singType = singTypes[Math.floor(Math.random() * singTypes.length)];
                         
                         if (singType === 'removable') {
                             return {
